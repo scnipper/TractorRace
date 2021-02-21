@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace Common.Units
@@ -7,6 +8,8 @@ namespace Common.Units
 		private Rigidbody rb;
 
 		private float addRotation;
+		private Tweener tweenRotate;
+
 		private void Start()
 		{
 			rb = GetComponent<Rigidbody>();
@@ -24,20 +27,36 @@ namespace Common.Units
 			}
 		}
 
+		public void RotateLeft()
+		{ 
+			tweenRotate?.Kill();
+			tweenRotate = DOTween.To(val => addRotation = val, 0, -40, 0.1f).SetEase(Ease.Linear);
+		}
+		public void RotateRight()
+		{ 
+			tweenRotate?.Kill();
+			tweenRotate = DOTween.To(val => addRotation = val, 0, 40, 0.1f).SetEase(Ease.Linear);
+		}
+
+		public void StopRotate()
+		{
+			tweenRotate?.Kill();
+			addRotation = 0;
+		}
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.D))
 			{
-				addRotation = 40;
+				RotateRight();
 			}
 
 			if (Input.GetKeyDown(KeyCode.A))
 			{
-				addRotation = -40;
+				RotateLeft();
 			}
 			if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
 			{
-				addRotation = 0;
+				StopRotate();
 			}
 
 			
