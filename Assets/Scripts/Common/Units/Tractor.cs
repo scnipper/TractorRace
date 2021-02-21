@@ -17,6 +17,11 @@ namespace Common.Units
 			var speed = rb.velocity.sqrMagnitude;
 			if(speed < 5000)
 				rb.AddRelativeForce(Force * 200);
+			
+			if (addRotation != 0)
+			{
+				rb.AddRelativeTorque(new Vector3(0,addRotation,0));
+			}
 		}
 
 		private void Update()
@@ -35,11 +40,7 @@ namespace Common.Units
 				addRotation = 0;
 			}
 
-			if (addRotation != 0)
-			{
-				print("add rotation "+addRotation);
-				rb.AddRelativeTorque(new Vector3(0,addRotation,0));
-			}
+			
 		}
 
 		public Vector3 Force { get; set; } = Vector3.forward;
