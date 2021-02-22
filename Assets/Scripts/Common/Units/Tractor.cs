@@ -10,9 +10,11 @@ namespace Common.Units
 		public Transform ladle;
 		public Transform cylinderGround;
 		public float maxSizeCylinder = 4;
-		private Rigidbody rb;
+		
+		public AxleInfo[] axleInfos; // the information about each individual axle
+		public float maxMotorTorque;     // maximum torque the motor can apply to wheel
+		public float maxSteeringAngle;
 
-		private float addRotation;
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
 		private Vector3 ladleLocalPosition;
@@ -21,12 +23,21 @@ namespace Common.Units
 		private Vector3 saveCylinderScale;
 		private GameObject cylinderGroundGameObject;
 
+		
+		[System.Serializable]
+		public class AxleInfo {
+			public WheelCollider leftWheel;
+			public WheelCollider rightWheel;
+			public Transform visualLeft;
+			public Transform visualRight;
+			public bool motor;    // is this wheel attached to motor?
+			public bool steering; // does this wheel apply steer angle?
+		}
 		private void Start()
 		{
 			cylinderGroundGameObject = cylinderGround.gameObject;
 			saveCylinderScale = cylinderGround.localScale;
 			cylinderGroundGameObject.SetActive(false);
-			rb = GetComponent<Rigidbody>();
 			ladleLocalPosition = ladle.localPosition;
 			cylinderPos = cylinderGround.localPosition;
 			cylinderGround.DOLocalRotate(new Vector3(40, 0, 90), 0.5f)
@@ -34,34 +45,52 @@ namespace Common.Units
 				.SetLoops(-1, LoopType.Incremental);
 		}
 
-		private void FixedUpdate()
+		public void FixedUpdate()
 		{
-			var speed = rb.velocity.sqrMagnitude;
-			if(speed < 5000)
-				rb.AddRelativeForce(Vector3.forward * 200);
-			
-			if (addRotation != 0)
-			{
-				rb.AddRelativeTorque(new Vector3(0,addRotation,0));
+			float motor = maxMotorTorque;
+			float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+            
+			foreach (AxleInfo axleInfo in axleInfos) {
+				if (axleInfo.steering) {
+					axleInfo.leftWheel.steerAngle = steering;
+					axleInfo.rightWheel.steerAngle = steering;
+				}
+				if (axleInfo.motor) {
+					axleInfo.leftWheel.motorTorque = motor;
+					axleInfo.rightWheel.motorTorque = motor;
+				}
+				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
+				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);
 			}
 		}
+		
+		// finds the corresponding visual wheel
+		// correctly applies the transform
+		public void ApplyLocalPositionToVisuals(Transform visualWheel,WheelCollider wheelCollider)
+		{
+
+			Vector3 position;
+			Quaternion rotation;
+			wheelCollider.GetWorldPose(out position, out rotation);
+
+			rotation *= Quaternion.Euler(0, 0, 90);
+			visualWheel.position = position;
+			visualWheel.rotation = rotation;
+		}
+	
 
 		public void RotateLeft()
 		{ 
 			tweenRotate?.Kill();
-			tweenRotate = DOTween.To(val => addRotation = val, 0, -40, 0.1f).SetEase(Ease.Linear);
+			//tweenRotate = DOTween.To(val => addRotation = val, 0, -10, 0.1f).SetEase(Ease.Linear);
 		}
 		public void RotateRight()
 		{ 
 			tweenRotate?.Kill();
-			tweenRotate = DOTween.To(val => addRotation = val, 0, 40, 0.1f).SetEase(Ease.Linear);
+			//tweenRotate = DOTween.To(val => addRotation = val, 0, 10, 0.1f).SetEase(Ease.Linear);
 		}
 
-		public void StopRotate()
-		{
-			tweenRotate?.Kill();
-			addRotation = 0;
-		}
+	
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.D))
@@ -73,15 +102,12 @@ namespace Common.Units
 			{
 				RotateLeft();
 			}
-			if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
-			{
-				StopRotate();
-			}
+			
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
 				ladleMoveTween?.Kill();
-				ladleMoveTween = ladle.DOLocalMove(new Vector3(0,1.46f,ladleLocalPosition.z),0.7f )
+				ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.7f )
 					.SetEase(Ease.Linear)
 					.OnComplete(()=>
 					{
