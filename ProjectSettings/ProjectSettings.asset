@@ -170,7 +170,8 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.slashcopy.tractor_race
     iPhone: com.slashcopy.ios.tractorrace
-  buildNumber: {}
+  buildNumber:
+    iPhone: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
