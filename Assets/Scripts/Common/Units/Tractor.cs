@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -18,6 +19,8 @@ namespace Common.Units
 		public GameObject pathDrawer;
 		public GameObject body;
 
+		public event Action onGameOver;
+
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
 		private Vector3 ladleLocalPosition;
@@ -29,7 +32,9 @@ namespace Common.Units
 
 		private static string waterTag = "Water";
 		private static string groundTag = "Ground";
+		private static string worldGroundTag = "WorldGround";
 		private bool isOnWater;
+		private bool isGameOver;
 
 		[System.Serializable]
 		public class AxleInfo {
@@ -73,6 +78,7 @@ namespace Common.Units
 
 		public void FixedUpdate()
 		{
+			if(isGameOver) return;
 #if UNITY_EDITOR
 			steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 #endif
@@ -101,6 +107,17 @@ namespace Common.Units
 					{
 						isOnWater = false;
 						pathDrawer.SetActive(false);
+					}
+					else if(wheelHit.collider.CompareTag(worldGroundTag))
+					{
+						isGameOver = true;
+						foreach (var ax in axleInfos)
+						{
+							ax.motor = false;
+							ax.leftWheel.motorTorque = 0;
+							ax.rightWheel.motorTorque = 0;
+						}
+						onGameOver?.Invoke();
 					}
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
@@ -139,6 +156,7 @@ namespace Common.Units
 	
 		private void Update()
 		{
+			if(isGameOver) return;
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
@@ -223,14 +241,10 @@ namespace Common.Units
 			if (isOnWater)
 			{
 				body.layer = LayerMask.NameToLayer("IgnoreWater");
-
-				foreach (var axleInfo in axleInfos)
+				foreach (var ax in axleInfos)
 				{
-					axleInfo.motor = false;
-					axleInfo.leftWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
-					axleInfo.rightWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
-					axleInfo.leftWheel.motorTorque = 0;
-					axleInfo.rightWheel.motorTorque = 0;
+					ax.leftWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
+					ax.rightWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
 				}
 			}
 		}
