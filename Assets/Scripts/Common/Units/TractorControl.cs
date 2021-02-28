@@ -28,7 +28,7 @@ namespace Common.Units
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
-		//	tractor.StopRotate();
+			tractor.StopRotate();
 		}
 	}
 }

@@ -300,6 +300,7 @@ MonoBehaviour:
     steering: 0
   maxMotorTorque: 125
   maxSteeringAngle: 30
+  delaySteering: 0.3
 --- !u!54 &2112887544595982820
 Rigidbody:
   m_ObjectHideFlags: 0

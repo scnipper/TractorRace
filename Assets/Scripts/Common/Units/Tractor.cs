@@ -14,6 +14,7 @@ namespace Common.Units
 		public AxleInfo[] axleInfos; // the information about each individual axle
 		public float maxMotorTorque;     // maximum torque the motor can apply to wheel
 		public float maxSteeringAngle;
+		public float delaySteering = 0.1f;
 
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
@@ -22,8 +23,9 @@ namespace Common.Units
 		private Vector3 cylinderPos;
 		private Vector3 saveCylinderScale;
 		private GameObject cylinderGroundGameObject;
+		private float steering;
 
-		
+
 		[System.Serializable]
 		public class AxleInfo {
 			public WheelCollider leftWheel;
@@ -47,7 +49,9 @@ namespace Common.Units
 
 		public void FixedUpdate()
 		{
-			float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+#if UNITY_EDITOR
+			steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+#endif
             
 			foreach (AxleInfo axleInfo in axleInfos) {
 				if (axleInfo.steering) {
@@ -79,16 +83,21 @@ namespace Common.Units
 	
 
 		public void RotateLeft()
-		{ 
+		{
 			tweenRotate?.Kill();
-			//tweenRotate = DOTween.To(val => addRotation = val, 0, -10, 0.1f).SetEase(Ease.Linear);
+			tweenRotate = DOTween.To(val => steering = val, steering, -maxSteeringAngle, delaySteering).SetEase(Ease.Linear);
 		}
 		public void RotateRight()
 		{ 
 			tweenRotate?.Kill();
-			//tweenRotate = DOTween.To(val => addRotation = val, 0, 10, 0.1f).SetEase(Ease.Linear);
+			tweenRotate = DOTween.To(val => steering = val, steering, maxSteeringAngle, delaySteering).SetEase(Ease.Linear);
 		}
 
+		public void StopRotate()
+		{
+			tweenRotate?.Kill();
+			tweenRotate = DOTween.To(val => steering = val, steering, 0, delaySteering).SetEase(Ease.Linear);
+		}
 	
 		private void Update()
 		{
@@ -96,7 +105,7 @@ namespace Common.Units
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
 				ladleMoveTween?.Kill();
-				ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.7f )
+				ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.35f )
 					.SetEase(Ease.Linear)
 					.OnComplete(()=>
 					{
@@ -111,7 +120,7 @@ namespace Common.Units
 
 				ladleMoveTween?.Kill();
 
-				ladleMoveTween = ladle.DOLocalMove(ladleLocalPosition,0.7f ).SetEase(Ease.Linear);
+				ladleMoveTween = ladle.DOLocalMove(ladleLocalPosition,0.35f ).SetEase(Ease.Linear);
 			}
 
 			
@@ -168,5 +177,6 @@ namespace Common.Units
 
 		}
 
+		
 	}
 }
