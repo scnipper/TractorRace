@@ -221,7 +221,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 567
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -302,8 +302,8 @@ MonoBehaviour:
   maxMotorTorque: 125
   maxSteeringAngle: 30
   delaySteering: 0.3
-  blockUnderTractor: {fileID: 1304455489505978858, guid: 7b5242f34571445d7b912c6988f2e41d,
-    type: 3}
+  pathDrawer: {fileID: 6266517880398061720}
+  body: {fileID: 2112887544236721904}
 --- !u!54 &2112887544595982820
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -478,7 +478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4565185734815116529
 Transform:
   m_ObjectHideFlags: 0

@@ -6,22 +6,29 @@ namespace Common.Scenes
 	public class GameScene : MonoBehaviour
 	{
 		public Tractor tractor;
-		private Transform tractorTransform;
-		private Vector3 tractorSavePosition;
-		private Quaternion tractorSaveRotation;
+		public Transform startPoint;
+		public Transform worldRoot;
+		private Tractor activeTractor;
 
 
 		private void Start()
 		{
-			tractorTransform = tractor.transform;
-			tractorSavePosition = tractorTransform.position;
-			tractorSaveRotation = tractorTransform.rotation;
+			CreateTractor();
+		}
+
+		private void CreateTractor()
+		{
+			if (activeTractor != null)
+			{
+				Destroy(activeTractor.gameObject);
+			}
+
+			activeTractor = Instantiate(tractor, startPoint.position, Quaternion.identity,worldRoot);
 		}
 
 		public void RestartGame()
 		{
-			tractorTransform.rotation = tractorSaveRotation;
-			tractorTransform.position = tractorSavePosition;
+			CreateTractor();
 		}
 	}
 }

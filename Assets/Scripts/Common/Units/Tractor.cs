@@ -15,7 +15,8 @@ namespace Common.Units
 		public float maxMotorTorque;     // maximum torque the motor can apply to wheel
 		public float maxSteeringAngle;
 		public float delaySteering = 0.1f;
-		private bool isCreatingPath;
+		public GameObject pathDrawer;
+		public GameObject body;
 
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
@@ -28,6 +29,7 @@ namespace Common.Units
 
 		private static string waterTag = "Water";
 		private static string groundTag = "Ground";
+		private bool isOnWater;
 
 		[System.Serializable]
 		public class AxleInfo {
@@ -51,16 +53,16 @@ namespace Common.Units
 		}
 
 
-		/*private void OnCollisionStay(Collision other)
+		/*private void OnCollisionEnter(Collision other)
 		{
 			print("collision stay "+other.collider.name);
 			if(other.collider.CompareTag(groundTag))
 			{
 				isCreatingPath = false;
 			}
-		}*/
+		}
 
-		/*private void OnTriggerEnter(Collider other)
+		private void OnTriggerEnter(Collider other)
 		{
 			if (other.CompareTag(waterTag))
 			{
@@ -87,7 +89,19 @@ namespace Common.Units
 				
 				if (axleInfo.leftWheel.GetGroundHit(out var wheelHit))
 				{
-					print("wheel hit "+wheelHit.collider.tag);
+					if (wheelHit.collider.CompareTag(waterTag))
+					{
+						isOnWater = true;
+						if (!cylinderGroundGameObject.activeSelf)
+						{
+							CheckGameOver();
+						}
+					}
+					else if(wheelHit.collider.CompareTag(groundTag))
+					{
+						isOnWater = false;
+						pathDrawer.SetActive(false);
+					}
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
 				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);
@@ -133,7 +147,7 @@ namespace Common.Units
 					.SetEase(Ease.Linear)
 					.OnComplete(()=>
 					{
-						cylinderGround.gameObject.SetActive(true);
+						cylinderGroundGameObject.SetActive(true);
 						isGroundContact = true;
 					});
 			}
@@ -162,13 +176,14 @@ namespace Common.Units
 		{
 			if (cylinderGroundGameObject.activeSelf)
 			{
+				pathDrawer.SetActive(true);
 				var scale = cylinderGround.localScale;
 
 				var posCylinder = cylinderGround.localPosition;
 
 
 				float deltaCylinder = Time.deltaTime;
-				if (isGroundContact)
+				if (isGroundContact && !isOnWater)
 				{
 					scale.x += deltaCylinder;
 					scale.z += deltaCylinder;
@@ -186,6 +201,8 @@ namespace Common.Units
 					{
 						scale = saveCylinderScale;
 						cylinderGroundGameObject.SetActive(false);
+						pathDrawer.SetActive(false);
+						CheckGameOver();
 					}
 				}
 
@@ -201,6 +218,21 @@ namespace Common.Units
 
 		}
 
-		
+		private void CheckGameOver()
+		{
+			if (isOnWater)
+			{
+				body.layer = LayerMask.NameToLayer("IgnoreWater");
+
+				foreach (var axleInfo in axleInfos)
+				{
+					axleInfo.motor = false;
+					axleInfo.leftWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
+					axleInfo.rightWheel.gameObject.layer = LayerMask.NameToLayer("IgnoreWater");
+					axleInfo.leftWheel.motorTorque = 0;
+					axleInfo.rightWheel.motorTorque = 0;
+				}
+			}
+		}
 	}
 }
