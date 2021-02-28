@@ -38,5 +38,7 @@ namespace Common.Scenes
 		{
 			CreateTractor();
 		}
+
+		public Tractor ActiveTractor => activeTractor;
 	}
 }

@@ -153,30 +153,40 @@ namespace Common.Units
 			tweenRotate?.Kill();
 			tweenRotate = DOTween.To(val => steering = val, steering, 0, delaySteering).SetEase(Ease.Linear);
 		}
-	
+
+		public void DownLadle()
+		{
+			ladleMoveTween?.Kill();
+			ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.35f )
+				.SetEase(Ease.Linear)
+				.OnComplete(()=>
+				{
+					cylinderGroundGameObject.SetActive(true);
+					isGroundContact = true;
+				});
+		}
+
+		public void UpLadle()
+		{
+			isGroundContact = false;
+
+			ladleMoveTween?.Kill();
+
+			ladleMoveTween = ladle.DOLocalMove(ladleLocalPosition,0.35f ).SetEase(Ease.Linear);
+		}
+
 		private void Update()
 		{
 			if(isGameOver) return;
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				ladleMoveTween?.Kill();
-				ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.35f )
-					.SetEase(Ease.Linear)
-					.OnComplete(()=>
-					{
-						cylinderGroundGameObject.SetActive(true);
-						isGroundContact = true;
-					});
+				DownLadle();
 			}
 
 			if (Input.GetKeyUp(KeyCode.Space))
 			{
-				isGroundContact = false;
-
-				ladleMoveTween?.Kill();
-
-				ladleMoveTween = ladle.DOLocalMove(ladleLocalPosition,0.35f ).SetEase(Ease.Linear);
+				UpLadle();
 			}
 
 			
@@ -185,7 +195,6 @@ namespace Common.Units
 
 		}
 
-	
 
 		/// <summary>
 		/// Обновляем размер комка земли перед ковшом

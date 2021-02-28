@@ -1,16 +1,26 @@
+using Common.Scenes;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Util;
 
 namespace Common.Units
 {
 	public class TractorControl : MonoBehaviour, IPointerDownHandler,IPointerUpHandler
 	{
-		public Tractor tractor;
+		public GameScene gameScene;
+		public DownUpButton ladleButton;
 		private Vector2 sizeInput;
 
 		private void Start()
 		{
 			sizeInput = GetComponent<RectTransform>().rect.size;
+			ladleButton.onDown += DownLadle;
+			ladleButton.onUp += UpLadle;
+		}
+
+		private void UpLadle()
+		{
+			gameScene.ActiveTractor.UpLadle();
 		}
 
 		public void OnPointerDown(PointerEventData eventData)
@@ -18,17 +28,22 @@ namespace Common.Units
 			var halfWidth = sizeInput.x / 2;
 			if (eventData.position.x > halfWidth)
 			{
-				tractor.RotateRight();
+				gameScene.ActiveTractor.RotateRight();
 			}
 			else
 			{
-				tractor.RotateLeft();
+				gameScene.ActiveTractor.RotateLeft();
 			}
+		}
+
+		public void DownLadle()
+		{
+			gameScene.ActiveTractor.DownLadle();
 		}
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
-			tractor.StopRotate();
+			gameScene.ActiveTractor.StopRotate();
 		}
 	}
 }
