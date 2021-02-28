@@ -93,16 +93,6 @@ namespace Common.Units
 	
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.D))
-			{
-				RotateRight();
-			}
-
-			if (Input.GetKeyDown(KeyCode.A))
-			{
-				RotateLeft();
-			}
-			
 
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
