@@ -15,6 +15,7 @@ namespace Common.Units
 		public float maxMotorTorque;     // maximum torque the motor can apply to wheel
 		public float maxSteeringAngle;
 		public float delaySteering = 0.1f;
+		private bool isCreatingPath;
 
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
@@ -25,6 +26,8 @@ namespace Common.Units
 		private GameObject cylinderGroundGameObject;
 		private float steering;
 
+		private static string waterTag = "Water";
+		private static string groundTag = "Ground";
 
 		[System.Serializable]
 		public class AxleInfo {
@@ -47,6 +50,25 @@ namespace Common.Units
 				.SetLoops(-1, LoopType.Incremental);
 		}
 
+
+		/*private void OnCollisionStay(Collision other)
+		{
+			print("collision stay "+other.collider.name);
+			if(other.collider.CompareTag(groundTag))
+			{
+				isCreatingPath = false;
+			}
+		}*/
+
+		/*private void OnTriggerEnter(Collider other)
+		{
+			if (other.CompareTag(waterTag))
+			{
+				isCreatingPath = true;
+			}
+		}*/
+		
+
 		public void FixedUpdate()
 		{
 #if UNITY_EDITOR
@@ -62,6 +84,11 @@ namespace Common.Units
 					axleInfo.leftWheel.motorTorque = maxMotorTorque;
 					axleInfo.rightWheel.motorTorque = maxMotorTorque;
 				}
+				
+				if (axleInfo.leftWheel.GetGroundHit(out var wheelHit))
+				{
+					print("wheel hit "+wheelHit.collider.tag);
+				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
 				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);
 			}
@@ -71,11 +98,8 @@ namespace Common.Units
 		// correctly applies the transform
 		public void ApplyLocalPositionToVisuals(Transform visualWheel,WheelCollider wheelCollider)
 		{
-
-			Vector3 position;
-			Quaternion rotation;
-			wheelCollider.GetWorldPose(out position, out rotation);
-
+			wheelCollider.GetWorldPose(out var position, out var rotation);
+			
 			rotation *= Quaternion.Euler(0, 0, 90);
 			visualWheel.position = position;
 			visualWheel.rotation = rotation;
