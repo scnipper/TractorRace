@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1033843798164",
+    "project_id": "tractor-race",
+    "storage_bucket": "tractor-race.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033843798164:android:2145a356b4c8fd29dbc481",
+        "android_client_info": {
+          "package_name": "com.slashcopy.tractor_race"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033843798164-put20o7128kf9og4uq8u5qc58fibolsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt-6NGWCtd0fRJm-nEQPS5wYRU2C1y3G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1033843798164-put20o7128kf9og4uq8u5qc58fibolsa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1033843798164-9rmglbescdke2eb9e4i4kqe4s9blmlr9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.slashcopy.ios.tractorrace"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

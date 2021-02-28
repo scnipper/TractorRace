@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id" xmlns:tools="http://schemas.android.com/tools">
+  <string name="gcm_defaultSenderId" translatable="false">1033843798164</string>
+  <string name="google_storage_bucket" translatable="false">tractor-race.appspot.com</string>
+  <string name="project_id" translatable="false">tractor-race</string>
+  <string name="google_api_key" translatable="false">AIzaSyDt-6NGWCtd0fRJm-nEQPS5wYRU2C1y3G0</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDt-6NGWCtd0fRJm-nEQPS5wYRU2C1y3G0</string>
+  <string name="google_app_id" translatable="false">1:1033843798164:android:2145a356b4c8fd29dbc481</string>
+  <string name="default_web_client_id" translatable="false">1033843798164-put20o7128kf9og4uq8u5qc58fibolsa.apps.googleusercontent.com</string>
+</resources>
