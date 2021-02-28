@@ -47,7 +47,6 @@ namespace Common.Units
 
 		public void FixedUpdate()
 		{
-			float motor = maxMotorTorque;
 			float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
             
 			foreach (AxleInfo axleInfo in axleInfos) {
@@ -56,8 +55,8 @@ namespace Common.Units
 					axleInfo.rightWheel.steerAngle = steering;
 				}
 				if (axleInfo.motor) {
-					axleInfo.leftWheel.motorTorque = motor;
-					axleInfo.rightWheel.motorTorque = motor;
+					axleInfo.leftWheel.motorTorque = maxMotorTorque;
+					axleInfo.rightWheel.motorTorque = maxMotorTorque;
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
 				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);

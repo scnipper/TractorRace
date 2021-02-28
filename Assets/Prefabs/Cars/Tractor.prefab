@@ -290,16 +290,16 @@ MonoBehaviour:
     rightWheel: {fileID: 2330071844180885786}
     visualLeft: {fileID: 6793558364628111481}
     visualRight: {fileID: 4908042972879490137}
-    motor: 1
+    motor: 0
     steering: 1
   - leftWheel: {fileID: 6430872913986277711}
     rightWheel: {fileID: 1143585303845572154}
     visualLeft: {fileID: 8080780742783303855}
     visualRight: {fileID: 641243010796354354}
-    motor: 0
+    motor: 1
     steering: 0
-  maxMotorTorque: 500
-  maxSteeringAngle: 20
+  maxMotorTorque: 125
+  maxSteeringAngle: 30
 --- !u!54 &2112887544595982820
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -308,7 +308,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112887544595982819}
   serializedVersion: 2
-  m_Mass: 500
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -697,6 +697,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: visualWheel
+      objectReference: {fileID: 0}
+    - target: {fileID: 567444968348717462, guid: 046fc7c3286524156991fae6ee12447f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8644209600197583827, guid: 046fc7c3286524156991fae6ee12447f,
         type: 3}
