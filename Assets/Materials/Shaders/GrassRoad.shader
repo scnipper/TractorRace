@@ -1,14 +1,17 @@
-Shader "Unlit/WaterUnlint"
+Shader "Unlit/GrassPath"
 {
     Properties
     {
          _Color ("Color", Color) = (1,1,1,1)
         _ColorPath ("Color paths", Color) = (1,1,1,1)
+        _OpacityPath ("Opacity path",Range(0,1)) = 1
         _MainTex ("Texture", 2D) = "white" {}
+        _MaskRoadTexture ("Texture mask road", 2D) = "white" {}
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" }
+        Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
         Pass
@@ -33,9 +36,11 @@ Shader "Unlit/WaterUnlint"
             };
 
             sampler2D _MainTex;
+            sampler2D _MaskRoadTexture;
             float4 _MainTex_ST;
             fixed4 _Color;
             fixed4 _ColorPath;
+            float _OpacityPath;
             
             v2f vert (appdata v)
             {
@@ -53,8 +58,10 @@ Shader "Unlit/WaterUnlint"
                 float2 uv = float2(1,1) - i.uv;
             
                 fixed4 colTexture = tex2D (_MainTex, i.uv);
+                fixed4 colMaskRoad = tex2D (_MaskRoadTexture, i.uv);
             
-                fixed4 c = (_Color * (1-colTexture.r)) + (colTexture.r * _ColorPath);
+               
+                fixed4 c = (_Color * (1-colTexture.g)) + (colTexture.g * _ColorPath * colMaskRoad.r * _OpacityPath);
                 return c;
             }
             ENDCG

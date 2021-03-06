@@ -17,6 +17,7 @@ namespace Common.Units
 		public float maxSteeringAngle;
 		public float delaySteering = 0.1f;
 		public GameObject pathDrawer;
+		public GameObject ladlePathDrawer;
 		public GameObject body;
 
 		public event Action onGameOver;
@@ -98,6 +99,7 @@ namespace Common.Units
 					if (wheelHit.collider.CompareTag(waterTag))
 					{
 						isOnWater = true;
+						ladlePathDrawer.SetActive(false);
 						if (!cylinderGroundGameObject.activeSelf)
 						{
 							CheckGameOver();
@@ -107,6 +109,7 @@ namespace Common.Units
 					{
 						isOnWater = false;
 						pathDrawer.SetActive(false);
+						ladlePathDrawer.SetActive(isGroundContact);
 					}
 					else if(wheelHit.collider.CompareTag(worldGroundTag))
 					{
@@ -163,12 +166,15 @@ namespace Common.Units
 				{
 					cylinderGroundGameObject.SetActive(true);
 					isGroundContact = true;
+					ladlePathDrawer.SetActive(true);
 				});
 		}
 
 		public void UpLadle()
 		{
 			isGroundContact = false;
+
+			ladlePathDrawer.SetActive(false);
 
 			ladleMoveTween?.Kill();
 
