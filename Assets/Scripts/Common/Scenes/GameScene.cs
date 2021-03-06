@@ -1,4 +1,5 @@
 ﻿using Common.Units;
+using Common.World;
 using UnityEngine;
 
 namespace Common.Scenes
@@ -9,6 +10,7 @@ namespace Common.Scenes
 		public Transform startPoint;
 		public Transform worldRoot;
 		public GameObject gameOverScreen;
+		public PlayerCamera playerCamera;
 		private Tractor activeTractor;
 
 
@@ -27,6 +29,7 @@ namespace Common.Scenes
 
 			activeTractor = Instantiate(tractor, startPoint.position, Quaternion.identity,worldRoot);
 			activeTractor.onGameOver += GameOver;
+			playerCamera.Tractor = activeTractor.transform;
 		}
 
 		private void GameOver()
