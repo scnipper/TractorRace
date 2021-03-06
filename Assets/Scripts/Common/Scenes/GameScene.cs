@@ -29,12 +29,14 @@ namespace Common.Scenes
 
 			activeTractor = Instantiate(tractor, startPoint.position, Quaternion.identity,worldRoot);
 			activeTractor.onGameOver += GameOver;
+			playerCamera.ResetCamera();
 			playerCamera.Tractor = activeTractor.transform;
 		}
 
 		private void GameOver()
 		{
 			gameOverScreen.SetActive(true);
+			playerCamera.GameOverMove();
 		}
 
 		public void RestartGame()
