@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using Common.World;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Common.Units
 {
@@ -72,14 +74,54 @@ namespace Common.Units
 			bool isBotMove = true;
 			float rotateSide = -1;
 			bool waitWhenNorm = false;
+
+			float timeWaitWhenLadleUp = 0;
+			
+
+			
 			while (isBotMove)
 			{
 				var wayPoint = Waypoints[wayPointIndex];
 
-				if (Vector3.Distance(wayPoint.position, trTractor.position) > 1.5f)
+				var pointToMove = wayPoint.mainPoint;
+
+				// двигаемся в обрез пути
+				if (wayPoint.isUseFastPoint && cylinderGroundGameObject.activeSelf && cylinderGround.localScale.x >= maxSizeCylinder-1)
+				{
+					pointToMove = wayPoint.fastPoint;
+				}
+
+				if (timeWaitWhenLadleUp > 0)
+				{
+					timeWaitWhenLadleUp -= Time.deltaTime;
+					if (timeWaitWhenLadleUp <= 0)
+					{
+						if (Random.value < 0.3f)
+						{
+							UpLadle();
+							timeWaitWhenLadleUp = 0;
+						}
+						else
+						{
+							timeWaitWhenLadleUp = Random.Range(1f, 5f);
+						}
+					}
+				}
+				else
+				{
+					if (Random.value < 0.004f)
+					{
+						DownLadle();
+						timeWaitWhenLadleUp = Random.Range(1f, 5f);
+					}
+				}
+
+				
+
+				if (Vector3.Distance(pointToMove.position, trTractor.position) > 1.5f)
 				{
 					
-					Vector3 dirFromAtoB = (wayPoint.position - trTractor.position).normalized;
+					Vector3 dirFromAtoB = (pointToMove.position - trTractor.position).normalized;
 					float dotProd = Vector3.Dot(dirFromAtoB, trTractor.forward);
 					
 					float maxSteeringWithRotateSide = maxSteeringAngle * rotateSide;
@@ -98,9 +140,13 @@ namespace Common.Units
 						steering = 0;
 					}
 
+
 					if (dotProd < 0.91 && !waitWhenNorm)
 					{
-						rotateSide *= -1; 
+						var crossAngle = Vector3.Angle((pointToMove.position - trTractor.position).normalized,
+														trTractor.right);
+
+						rotateSide = crossAngle < 90 ? 1 : -1; 
 						waitWhenNorm = true;
 					}
 
@@ -344,6 +390,6 @@ namespace Common.Units
 		}
 
 		public bool IsBot { get; set; }
-		public Transform[] Waypoints { get; set; }
+		public WayPoint[] Waypoints { get; set; }
 	}
 }

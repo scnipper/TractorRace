@@ -12,7 +12,7 @@ namespace Common.Scenes
 		public Transform worldRoot;
 		public GameObject gameOverScreen;
 		public PlayerCamera playerCamera;
-		public Transform[] waypoints;
+		public WayPoint[] waypoints;
 		private Tractor activeTractor;
 		private List<Tractor> tractors;
 
