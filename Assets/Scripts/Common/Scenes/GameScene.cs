@@ -25,6 +25,8 @@ namespace Common.Scenes
 
 		private void CreateTractor()
 		{
+			playerCamera.ResetCamera();
+
 			gameOverScreen.SetActive(false);
 			if (activeTractor != null)
 			{
@@ -43,7 +45,6 @@ namespace Common.Scenes
 				botTractor.IsBot = true;
 				tractors.Add(botTractor);
 			}
-			playerCamera.ResetCamera();
 			playerCamera.Tractor = activeTractor.transform;
 		}
 

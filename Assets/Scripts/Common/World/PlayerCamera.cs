@@ -1,5 +1,7 @@
 using System.Collections;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using UnityEngine;
 
 namespace Common.World
@@ -11,6 +13,8 @@ namespace Common.World
 		private bool isLookAt;
 		private Vector3 savePos;
 		private Quaternion saveRotate;
+		private TweenerCore<Vector3, Vector3, VectorOptions> moveToUpTween;
+		private Coroutine moveCameraToTopCoroutine;
 
 		private void Start()
 		{
@@ -22,11 +26,17 @@ namespace Common.World
 
 		public void ResetCamera()
 		{
+			if (moveCameraToTopCoroutine != null)
+			{
+				StopCoroutine(moveCameraToTopCoroutine);
+				moveCameraToTopCoroutine = null;
+			}
+			
+			moveToUpTween?.Kill();
+
 			isLookAt = false;
 			tr.position = savePos;
 			tr.rotation = saveRotate;
-
-			
 		}
 		private void Update()
 		{
@@ -53,20 +63,21 @@ namespace Common.World
 		/// </summary>
 		public void GameOverMove()
 		{
-			StartCoroutine(MoveCameraAfterStop());
-			
+			if(moveCameraToTopCoroutine == null)
+				moveCameraToTopCoroutine = StartCoroutine(MoveCameraAfterStop());
 		}
 
 		private IEnumerator MoveCameraAfterStop()
 		{
 			var rbTractor = Tractor.GetComponent<Rigidbody>();
 
-			yield return new WaitUntil(()=>rbTractor.velocity.sqrMagnitude < 3f);
+			yield return new WaitUntil(()=>rbTractor != null && rbTractor.velocity.sqrMagnitude < 3f);
+		
 			isLookAt = true;
 			var tractorPosition = Tractor.position;
 
 			tractorPosition.y = 10;
-			tr.DOMove(tractorPosition, 3f);
+			moveToUpTween = tr.DOMove(tractorPosition, 3f);
 		}
 
 		public Transform Tractor { get; set; }
