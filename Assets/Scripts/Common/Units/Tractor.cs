@@ -176,22 +176,13 @@ namespace Common.Units
 		}
 
 
-		/*private void OnCollisionEnter(Collision other)
+		private void OnCollisionEnter(Collision other)
 		{
-			print("collision stay "+other.collider.name);
-			if(other.collider.CompareTag(groundTag))
+			if(!isGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
 			{
-				isCreatingPath = false;
+				CallGameOver();
 			}
 		}
-
-		private void OnTriggerEnter(Collider other)
-		{
-			if (other.CompareTag(waterTag))
-			{
-				isCreatingPath = true;
-			}
-		}*/
 		
 
 		public void FixedUpdate()
@@ -229,23 +220,31 @@ namespace Common.Units
 						pathDrawer.SetActive(false);
 						ladlePathDrawer.SetActive(isGroundContact);
 					}
-					else if(wheelHit.collider.CompareTag(worldGroundTag))
+					else if(wheelHit.collider.CompareTag(worldGroundTag) && !IsBot)
 					{
-						isGameOver = true;
-						foreach (var ax in axleInfos)
-						{
-							ax.motor = false;
-							ax.leftWheel.motorTorque = 0;
-							ax.rightWheel.motorTorque = 0;
-						}
-						onGameOver?.Invoke();
+						CallGameOver();
 					}
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
 				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);
 			}
 		}
-		
+
+		/// <summary>
+		/// Вызываем гаме овер
+		/// </summary>
+		private void CallGameOver()
+		{
+			isGameOver = true;
+			foreach (var ax in axleInfos)
+			{
+				ax.motor = false;
+				ax.leftWheel.motorTorque = 0;
+				ax.rightWheel.motorTorque = 0;
+			}
+			onGameOver?.Invoke();
+		}
+
 		// finds the corresponding visual wheel
 		// correctly applies the transform
 		public void ApplyLocalPositionToVisuals(Transform visualWheel,WheelCollider wheelCollider)
