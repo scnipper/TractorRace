@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-WORKSPACE="/Users/scnipper/Documents/unity/Tractor race"
+WORKSPACE="/Users/scnipper/Documents/unity/TractorRace"
 UNITY_BUILD_FOLDER="$WORKSPACE/Build"
 FINAL_DIR="$UNITY_BUILD_FOLDER/Android"
 FASTLANE_FIN_DIR="$FINAL_DIR/fastlane"

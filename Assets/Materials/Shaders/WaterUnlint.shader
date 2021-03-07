@@ -8,7 +8,9 @@ Shader "Unlit/WaterUnlint"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" }
+        Blend SrcAlpha OneMinusSrcAlpha
+
         LOD 100
 
         Pass
@@ -54,7 +56,7 @@ Shader "Unlit/WaterUnlint"
             
                 fixed4 colTexture = tex2D (_MainTex, i.uv);
             
-                fixed4 c = _Color + colTexture.r * _ColorPath;
+                fixed4 c = (_Color * (1-colTexture.r)) + (colTexture.r * _ColorPath);
                 return c;
             }
             ENDCG
