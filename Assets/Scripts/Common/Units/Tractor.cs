@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -36,8 +37,10 @@ namespace Common.Units
 		private static string worldGroundTag = "WorldGround";
 		private bool isOnWater;
 		private bool isGameOver;
+		private Transform trTractor;
+		private bool isStoppingRotate = true;
 
-		[System.Serializable]
+		[Serializable]
 		public class AxleInfo {
 			public WheelCollider leftWheel;
 			public WheelCollider rightWheel;
@@ -56,6 +59,74 @@ namespace Common.Units
 			cylinderGround.DOLocalRotate(new Vector3(40, 0, 90), 0.5f)
 				.SetEase(Ease.Linear)
 				.SetLoops(-1, LoopType.Incremental);
+
+			trTractor = transform;
+			if(IsBot)
+				StartCoroutine(BotCycle());
+			
+		}
+
+		private IEnumerator BotCycle()
+		{
+			int wayPointIndex = 0;
+			bool isBotMove = true;
+			float rotateSide = -1;
+			bool waitWhenNorm = false;
+			while (isBotMove)
+			{
+				var wayPoint = Waypoints[wayPointIndex];
+
+				if (Vector3.Distance(wayPoint.position, trTractor.position) > 1.5f)
+				{
+					
+					Vector3 dirFromAtoB = (wayPoint.position - trTractor.position).normalized;
+					float dotProd = Vector3.Dot(dirFromAtoB, trTractor.forward);
+					
+					float maxSteeringWithRotateSide = maxSteeringAngle * rotateSide;
+					
+					float newSteeringValue = maxSteeringWithRotateSide * ((1-dotProd) / 0.09f);
+					if (newSteeringValue < maxSteeringWithRotateSide || newSteeringValue > maxSteeringWithRotateSide)
+					{
+						newSteeringValue = maxSteeringWithRotateSide;
+					}
+					steering = newSteeringValue;
+
+
+
+					if (dotProd > 0.96f)
+					{
+						steering = 0;
+					}
+
+					if (dotProd < 0.91 && !waitWhenNorm)
+					{
+						rotateSide *= -1; 
+						waitWhenNorm = true;
+					}
+
+					if (waitWhenNorm && dotProd > 0.91)
+					{
+						waitWhenNorm = false;
+						
+					}
+				}
+				else
+				{
+
+					wayPointIndex++;
+
+					if (wayPointIndex >= Waypoints.Length)
+					{
+						isBotMove = false;
+					}
+
+					steering = 0;
+
+				}
+				
+				
+				yield return null;
+			}
 		}
 
 
@@ -81,7 +152,8 @@ namespace Common.Units
 		{
 			if(isGameOver) return;
 #if UNITY_EDITOR
-			steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+			if(!IsBot)
+				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 #endif
             
 			foreach (AxleInfo axleInfo in axleInfos) {
@@ -154,7 +226,10 @@ namespace Common.Units
 		public void StopRotate()
 		{
 			tweenRotate?.Kill();
-			tweenRotate = DOTween.To(val => steering = val, steering, 0, delaySteering).SetEase(Ease.Linear);
+			isStoppingRotate = false;
+			tweenRotate = DOTween.To(val => steering = val, steering, 0, delaySteering)
+				.OnComplete(()=>isStoppingRotate = true)
+				.SetEase(Ease.Linear);
 		}
 
 		public void DownLadle()
@@ -185,15 +260,19 @@ namespace Common.Units
 		{
 			if(isGameOver) return;
 
-			if (Input.GetKeyDown(KeyCode.Space))
+			if (!IsBot)
 			{
-				DownLadle();
-			}
+				if (Input.GetKeyDown(KeyCode.Space))
+				{
+					DownLadle();
+				}
 
-			if (Input.GetKeyUp(KeyCode.Space))
-			{
-				UpLadle();
+				if (Input.GetKeyUp(KeyCode.Space))
+				{
+					UpLadle();
+				}
 			}
+			
 
 			
 			UpdateSizeCylinderGround();
@@ -263,5 +342,8 @@ namespace Common.Units
 				}
 			}
 		}
+
+		public bool IsBot { get; set; }
+		public Transform[] Waypoints { get; set; }
 	}
 }
