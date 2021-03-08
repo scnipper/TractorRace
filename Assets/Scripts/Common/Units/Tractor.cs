@@ -40,7 +40,6 @@ namespace Common.Units
 		private static string worldGroundTag = "WorldGround";
 		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
-		private bool isGameOver;
 		private Transform trTractor;
 		private bool isStoppingRotate = true;
 
@@ -178,24 +177,27 @@ namespace Common.Units
 		}
 
 
-		private void OnCollisionEnter(Collision other)
+		private void OnTriggerEnter(Collider other)
 		{
-			if(!isGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
-			{
-				CallGameOver();
-			}
-
-			if (!IsBot && other.collider.CompareTag(finishPoint))
+			if (other.CompareTag(finishPoint))
 			{
 				onFinish?.Invoke();
-				isGameOver = true;
+				IsGameOver = true;
+			}
+		}
+
+		private void OnCollisionEnter(Collision other)
+		{
+			if(!IsGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
+			{
+				CallGameOver();
 			}
 		}
 		
 
 		public void FixedUpdate()
 		{
-			if(isGameOver) return;
+			if(IsGameOver) return;
 #if UNITY_EDITOR
 			if(!IsBot)
 				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
@@ -247,14 +249,20 @@ namespace Common.Units
 		/// </summary>
 		private void CallGameOver()
 		{
-			isGameOver = true;
+			if(IsGameOver) return;
+			IsGameOver = true;
+			StopMove();
+			onGameOver?.Invoke();
+		}
+
+		public void StopMove()
+		{
 			foreach (var ax in axleInfos)
 			{
 				ax.motor = false;
 				ax.leftWheel.motorTorque = 0;
 				ax.rightWheel.motorTorque = 0;
 			}
-			onGameOver?.Invoke();
 		}
 
 		// finds the corresponding visual wheel
@@ -319,7 +327,7 @@ namespace Common.Units
 
 		private void Update()
 		{
-			if(isGameOver) return;
+			if(IsGameOver) return;
 
 			if (!IsBot)
 			{
@@ -403,6 +411,7 @@ namespace Common.Units
 			}
 		}
 
+		public bool IsGameOver { get; set; }
 		public bool IsBot { get; set; }
 		public WayPoint[] Waypoints { get; set; }
 	}
