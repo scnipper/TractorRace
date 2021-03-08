@@ -24,6 +24,7 @@ namespace Common.Units
 		public GameObject body;
 
 		public event Action onGameOver;
+		public event Action onFinish;
 
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
@@ -37,8 +38,8 @@ namespace Common.Units
 		private static string waterTag = "Water";
 		private static string groundTag = "Ground";
 		private static string worldGroundTag = "WorldGround";
+		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
-		private bool isGameOver;
 		private Transform trTractor;
 		private bool isStoppingRotate = true;
 
@@ -176,9 +177,18 @@ namespace Common.Units
 		}
 
 
+		private void OnTriggerEnter(Collider other)
+		{
+			if (other.CompareTag(finishPoint))
+			{
+				onFinish?.Invoke();
+				IsGameOver = true;
+			}
+		}
+
 		private void OnCollisionEnter(Collision other)
 		{
-			if(!isGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
+			if(!IsGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
 			{
 				CallGameOver();
 			}
@@ -187,7 +197,7 @@ namespace Common.Units
 
 		public void FixedUpdate()
 		{
-			if(isGameOver) return;
+			if(IsGameOver) return;
 #if UNITY_EDITOR
 			if(!IsBot)
 				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
@@ -209,6 +219,7 @@ namespace Common.Units
 					{
 						isOnWater = true;
 						ladlePathDrawer.SetActive(false);
+						pathDrawer.SetActive(true);
 						if (!cylinderGroundGameObject.activeSelf)
 						{
 							CheckGameOver();
@@ -220,9 +231,12 @@ namespace Common.Units
 						pathDrawer.SetActive(false);
 						ladlePathDrawer.SetActive(isGroundContact);
 					}
-					else if(wheelHit.collider.CompareTag(worldGroundTag) && !IsBot)
+					else if(wheelHit.collider.CompareTag(worldGroundTag))
 					{
-						CallGameOver();
+						pathDrawer.SetActive(false);
+
+						if(!IsBot)
+							CallGameOver();
 					}
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
@@ -235,14 +249,20 @@ namespace Common.Units
 		/// </summary>
 		private void CallGameOver()
 		{
-			isGameOver = true;
+			if(IsGameOver) return;
+			IsGameOver = true;
+			StopMove();
+			onGameOver?.Invoke();
+		}
+
+		public void StopMove()
+		{
 			foreach (var ax in axleInfos)
 			{
 				ax.motor = false;
 				ax.leftWheel.motorTorque = 0;
 				ax.rightWheel.motorTorque = 0;
 			}
-			onGameOver?.Invoke();
 		}
 
 		// finds the corresponding visual wheel
@@ -255,8 +275,12 @@ namespace Common.Units
 			visualWheel.position = position;
 			visualWheel.rotation = rotation;
 		}
-	
 
+
+		public void RotateByFactor(float factor)
+		{
+			steering = maxSteeringAngle * factor;
+		}
 		public void RotateLeft()
 		{
 			tweenRotate?.Kill();
@@ -303,7 +327,7 @@ namespace Common.Units
 
 		private void Update()
 		{
-			if(isGameOver) return;
+			if(IsGameOver) return;
 
 			if (!IsBot)
 			{
@@ -333,7 +357,6 @@ namespace Common.Units
 		{
 			if (cylinderGroundGameObject.activeSelf)
 			{
-				pathDrawer.SetActive(true);
 				var scale = cylinderGround.localScale;
 
 				var posCylinder = cylinderGround.localPosition;
@@ -388,6 +411,7 @@ namespace Common.Units
 			}
 		}
 
+		public bool IsGameOver { get; set; }
 		public bool IsBot { get; set; }
 		public WayPoint[] Waypoints { get; set; }
 	}
