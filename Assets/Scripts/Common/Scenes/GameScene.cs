@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common.Control;
 using Common.Units;
 using Common.World;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Common.Scenes
 		public GameObject gameOverScreen;
 		public PlayerCamera playerCamera;
 		public WayPoint[] waypoints;
+		public StickTractorControl stickTractorControl;
 		private Tractor activeTractor;
 		private List<Tractor> tractors;
 
@@ -27,6 +29,7 @@ namespace Common.Scenes
 		{
 			playerCamera.ResetCamera();
 
+			stickTractorControl.ResetControl();
 			gameOverScreen.SetActive(false);
 			if (activeTractor != null)
 			{

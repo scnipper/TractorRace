@@ -189,8 +189,8 @@ namespace Common.Units
 		{
 			if(isGameOver) return;
 #if UNITY_EDITOR
-			if(!IsBot)
-				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+			//if(!IsBot)
+			//	steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 #endif
             
 			foreach (AxleInfo axleInfo in axleInfos) {
@@ -255,8 +255,12 @@ namespace Common.Units
 			visualWheel.position = position;
 			visualWheel.rotation = rotation;
 		}
-	
 
+
+		public void RotateByFactor(float factor)
+		{
+			steering = maxSteeringAngle * factor;
+		}
 		public void RotateLeft()
 		{
 			tweenRotate?.Kill();

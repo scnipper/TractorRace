@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Util;
 
-namespace Common.Units
+namespace Common.Control
 {
 	public class TractorControl : MonoBehaviour, IPointerDownHandler,IPointerUpHandler
 	{
