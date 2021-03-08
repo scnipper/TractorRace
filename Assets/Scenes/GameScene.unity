@@ -3252,6 +3252,7 @@ MonoBehaviour:
   - {fileID: 1195897281}
   - {fileID: 915037933}
   - {fileID: 1291017276}
+  stickTractorControl: {fileID: 258848639}
 --- !u!4 &1141396666
 Transform:
   m_ObjectHideFlags: 0

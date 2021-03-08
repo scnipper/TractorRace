@@ -189,8 +189,8 @@ namespace Common.Units
 		{
 			if(isGameOver) return;
 #if UNITY_EDITOR
-			//if(!IsBot)
-			//	steering = maxSteeringAngle * Input.GetAxis("Horizontal");
+			if(!IsBot)
+				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 #endif
             
 			foreach (AxleInfo axleInfo in axleInfos) {
@@ -209,6 +209,7 @@ namespace Common.Units
 					{
 						isOnWater = true;
 						ladlePathDrawer.SetActive(false);
+						pathDrawer.SetActive(true);
 						if (!cylinderGroundGameObject.activeSelf)
 						{
 							CheckGameOver();
@@ -220,9 +221,12 @@ namespace Common.Units
 						pathDrawer.SetActive(false);
 						ladlePathDrawer.SetActive(isGroundContact);
 					}
-					else if(wheelHit.collider.CompareTag(worldGroundTag) && !IsBot)
+					else if(wheelHit.collider.CompareTag(worldGroundTag))
 					{
-						CallGameOver();
+						pathDrawer.SetActive(false);
+
+						if(!IsBot)
+							CallGameOver();
 					}
 				}
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
@@ -337,7 +341,6 @@ namespace Common.Units
 		{
 			if (cylinderGroundGameObject.activeSelf)
 			{
-				pathDrawer.SetActive(true);
 				var scale = cylinderGround.localScale;
 
 				var posCylinder = cylinderGround.localPosition;

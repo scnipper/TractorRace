@@ -211,7 +211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ladle: {fileID: 3190258057399476360}
   cylinderGround: {fileID: 2298522942411383819}
-  maxSizeCylinder: 4
+  maxSizeCylinder: 6
   axleInfos:
   - leftWheel: {fileID: 2368609093313113378}
     rightWheel: {fileID: 2330071844180885786}
