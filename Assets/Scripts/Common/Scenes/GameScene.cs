@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Common.Control;
 using Common.Units;
 using Common.World;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Common.Scenes
 {
@@ -15,8 +18,11 @@ namespace Common.Scenes
 		public PlayerCamera playerCamera;
 		public WayPoint[] waypoints;
 		public StickTractorControl stickTractorControl;
+		public Transform finishPoint;
+		public Text placeText;
 		private Tractor activeTractor;
 		private List<Tractor> tractors;
+		private bool isUpdatePlaceText;
 
 
 		private void Start()
@@ -29,6 +35,7 @@ namespace Common.Scenes
 		{
 			playerCamera.ResetCamera();
 
+			isUpdatePlaceText = false;
 			stickTractorControl.ResetControl();
 			gameOverScreen.SetActive(false);
 			if (activeTractor != null)
@@ -49,6 +56,45 @@ namespace Common.Scenes
 				tractors.Add(botTractor);
 			}
 			playerCamera.Tractor = activeTractor.transform;
+			StartCoroutine(UpdatePlaceText());
+		}
+
+		private IEnumerator UpdatePlaceText()
+		{
+			var distances = new List<float>();
+			var tractorsTransform = tractors.Select(tr => tr.transform).ToList();
+			var activeTransform = activeTractor.transform;
+			isUpdatePlaceText = true;
+			while (isUpdatePlaceText)
+			{
+				distances.Clear();
+				foreach (var tr in tractorsTransform)
+				{
+					if(tr == null) yield break;
+					distances.Add((finishPoint.position - tr.position).sqrMagnitude);
+				}
+
+				var sortDistances = distances.OrderByDescending(dist=>dist).ToList();
+				
+				
+
+				var mainDistance = (finishPoint.position - activeTransform.position).sqrMagnitude;
+
+				int place = sortDistances.Count;
+				for (var i = 0; i < sortDistances.Count; i++)
+				{
+					if (mainDistance < sortDistances[i])
+					{
+						place = i;
+					}
+				}
+
+
+				placeText.text = $"Place: {place + 1}/{distances.Count + 1}";
+				
+
+				yield return new WaitForSeconds(0.3f);
+			}
 		}
 
 		private void GameOver()

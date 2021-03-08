@@ -24,6 +24,7 @@ namespace Common.Units
 		public GameObject body;
 
 		public event Action onGameOver;
+		public event Action onFinish;
 
 		private Tweener tweenRotate;
 		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
@@ -37,6 +38,7 @@ namespace Common.Units
 		private static string waterTag = "Water";
 		private static string groundTag = "Ground";
 		private static string worldGroundTag = "WorldGround";
+		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
 		private bool isGameOver;
 		private Transform trTractor;
@@ -181,6 +183,12 @@ namespace Common.Units
 			if(!isGameOver && !IsBot && other.collider.CompareTag(worldGroundTag))
 			{
 				CallGameOver();
+			}
+
+			if (!IsBot && other.collider.CompareTag(finishPoint))
+			{
+				onFinish?.Invoke();
+				isGameOver = true;
 			}
 		}
 		
