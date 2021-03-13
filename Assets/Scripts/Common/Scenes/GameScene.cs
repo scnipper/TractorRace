@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Control;
+using Common.Control.Impl;
 using Common.Units;
 using Common.World;
 using UnityEngine;
 using UnityEngine.UI;
+using Util.Extensions;
 
 namespace Common.Scenes
 {
@@ -18,51 +20,72 @@ namespace Common.Scenes
 		public GameObject finishScreen;
 		public PlayerCamera playerCamera;
 		public WayPoint[] waypoints;
-		public StickTractorControl stickTractorControl;
+		public BaseControl[] controlPlayer;
+		public Transform controlContainer;
+		public BaseControl controlCpu;
+		
 		public Transform finishPoint;
 		public Text placeText;
 		private Tractor activeTractor;
 		private List<Tractor> tractors;
 		private bool isUpdatePlaceText;
 		private int placeMainTractor;
+		private int lastUseControl;
 
 
 		private void Start()
 		{
 			tractors = new List<Tractor>();
-			CreateTractor();
 		}
 
-		private void CreateTractor()
+		public void CreateTractor(int controlNum)
 		{
+			lastUseControl = controlNum;
 			playerCamera.ResetCamera();
 
 			isUpdatePlaceText = false;
-			stickTractorControl.ResetControl();
 			gameOverScreen.SetActive(false);
 			finishScreen.SetActive(false);
 			if (activeTractor != null)
 			{
 				Destroy(activeTractor.gameObject);
 			}
+			
+			controlContainer.ClearAllChildren();
 
 			ClearTractors();
 			activeTractor = Instantiate(tractor, startPoints[0].position, Quaternion.identity,worldRoot);
 			activeTractor.onGameOver += GameOver;
 			activeTractor.onFinish += FinishGame;
+			activeTractor.Control = CreateControl(controlPlayer[controlNum]);
 
 			
 			for (var i = 1; i < startPoints.Length; i++)
 			{
 				var botTractor = Instantiate(tractor, startPoints[i].position, Quaternion.identity,worldRoot);
-				botTractor.Waypoints = waypoints;
 				botTractor.IsBot = true;
 				botTractor.onFinish += FinishGame;
+				var botTractorControl = CreateControl(controlCpu) as BotTractorControl;
+				if (botTractorControl != null)
+				{
+					botTractorControl.Waypoints = waypoints;
+					botTractorControl.MainTractor = botTractor;
+				}
+				botTractor.Control = botTractorControl;
 				tractors.Add(botTractor);
 			}
 			playerCamera.Tractor = activeTractor.transform;
 			StartCoroutine(UpdatePlaceText());
 		}
+
+		private BaseControl CreateControl(BaseControl control)
+		{
+			var baseControl = Instantiate(control, controlContainer);
+			baseControl.ResetControl();
+			return baseControl;
+		}
+		
+		
 
 		/// <summary>
 		/// Когда доехали до финиша
@@ -141,9 +164,7 @@ namespace Common.Scenes
 
 		public void RestartGame()
 		{
-			CreateTractor();
+			CreateTractor(lastUseControl);
 		}
-
-		public Tractor ActiveTractor => activeTractor;
 	}
 }

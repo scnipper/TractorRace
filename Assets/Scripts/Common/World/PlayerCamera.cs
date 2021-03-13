@@ -40,21 +40,25 @@ namespace Common.World
 		}
 		private void Update()
 		{
-			if (isLookAt)
+			if (Tractor != null)
 			{
-				tr.LookAt(Tractor);
+				if (isLookAt)
+				{
+					tr.LookAt(Tractor);
 				
-			}
-			else
-			{
-				var cameraPos = Tractor.position - Tractor.forward * 1.8f;
-				cameraPos.y = 1.7f;
+				}
+				else
+				{
+					var cameraPos = Tractor.position - Tractor.forward * 1.8f;
+					cameraPos.y = 1.7f;
 
-				var rotationCamera = new Vector3(rotX,Tractor.eulerAngles.y,0);
+					var rotationCamera = new Vector3(rotX,Tractor.eulerAngles.y,0);
 
-				tr.eulerAngles = rotationCamera;
-				tr.position = cameraPos;
+					tr.eulerAngles = rotationCamera;
+					tr.position = cameraPos;
+				}
 			}
+			
 			
 		}
 

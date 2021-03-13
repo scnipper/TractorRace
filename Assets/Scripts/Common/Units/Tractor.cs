@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using Common.World;
+using Common.Control.Impl;
 using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Common.Units
 {
@@ -27,9 +23,7 @@ namespace Common.Units
 		public event Action onFinish;
 
 		private Tweener tweenRotate;
-		private TweenerCore<Vector3, Vector3, VectorOptions> ladleMoveTween;
 		private Vector3 ladleLocalPosition;
-		private bool isGroundContact;
 		private Vector3 cylinderPos;
 		private Vector3 saveCylinderScale;
 		private GameObject cylinderGroundGameObject;
@@ -64,117 +58,9 @@ namespace Common.Units
 				.SetLoops(-1, LoopType.Incremental);
 
 			trTractor = transform;
-			if(IsBot)
-				StartCoroutine(BotCycle());
-			
 		}
 
-		private IEnumerator BotCycle()
-		{
-			int wayPointIndex = 0;
-			bool isBotMove = true;
-			float rotateSide = -1;
-			bool waitWhenNorm = false;
-
-			float timeWaitWhenLadleUp = 0;
-			
-
-			
-			while (isBotMove)
-			{
-				var wayPoint = Waypoints[wayPointIndex];
-
-				var pointToMove = wayPoint.mainPoint;
-
-				// двигаемся в обрез пути
-				if (wayPoint.isUseFastPoint && cylinderGroundGameObject.activeSelf && cylinderGround.localScale.x >= maxSizeCylinder-1)
-				{
-					pointToMove = wayPoint.fastPoint;
-				}
-
-				if (timeWaitWhenLadleUp > 0)
-				{
-					timeWaitWhenLadleUp -= Time.deltaTime;
-					if (timeWaitWhenLadleUp <= 0)
-					{
-						if (Random.value < 0.3f)
-						{
-							UpLadle();
-							timeWaitWhenLadleUp = 0;
-						}
-						else
-						{
-							timeWaitWhenLadleUp = Random.Range(1f, 5f);
-						}
-					}
-				}
-				else
-				{
-					if (Random.value < 0.004f)
-					{
-						DownLadle();
-						timeWaitWhenLadleUp = Random.Range(1f, 5f);
-					}
-				}
-
-				
-
-				if (Vector3.Distance(pointToMove.position, trTractor.position) > 1.5f)
-				{
-					
-					Vector3 dirFromAtoB = (pointToMove.position - trTractor.position).normalized;
-					float dotProd = Vector3.Dot(dirFromAtoB, trTractor.forward);
-					
-					float maxSteeringWithRotateSide = maxSteeringAngle * rotateSide;
-					
-					float newSteeringValue = maxSteeringWithRotateSide * ((1-dotProd) / 0.09f);
-					if (newSteeringValue < maxSteeringWithRotateSide || newSteeringValue > maxSteeringWithRotateSide)
-					{
-						newSteeringValue = maxSteeringWithRotateSide;
-					}
-					steering = newSteeringValue;
-
-
-
-					if (dotProd > 0.96f)
-					{
-						steering = 0;
-					}
-
-
-					if (dotProd < 0.91 && !waitWhenNorm)
-					{
-						var crossAngle = Vector3.Angle((pointToMove.position - trTractor.position).normalized,
-														trTractor.right);
-
-						rotateSide = crossAngle < 90 ? 1 : -1; 
-						waitWhenNorm = true;
-					}
-
-					if (waitWhenNorm && dotProd > 0.91)
-					{
-						waitWhenNorm = false;
-						
-					}
-				}
-				else
-				{
-
-					wayPointIndex++;
-
-					if (wayPointIndex >= Waypoints.Length)
-					{
-						isBotMove = false;
-					}
-
-					steering = 0;
-
-				}
-				
-				
-				yield return null;
-			}
-		}
+		
 
 
 		private void OnTriggerEnter(Collider other)
@@ -198,11 +84,21 @@ namespace Common.Units
 		public void FixedUpdate()
 		{
 			if(IsGameOver) return;
-#if UNITY_EDITOR
-			if(!IsBot)
-				steering = maxSteeringAngle * Input.GetAxis("Horizontal");
-#endif
-            
+			
+			steering = maxSteeringAngle * Control.GetHorizontal();
+
+			ladle.localPosition = Vector3.Lerp(ladleLocalPosition, new Vector3(0, 0.1f, ladleLocalPosition.z),
+												Control.GetVertical());
+
+			if (Control.IsContactGround())
+			{
+				cylinderGroundGameObject.SetActive(true);
+				ladlePathDrawer.SetActive(true);
+			}
+			else
+			{
+				ladlePathDrawer.SetActive(false);
+			}
 			foreach (AxleInfo axleInfo in axleInfos) {
 				if (axleInfo.steering) {
 					axleInfo.leftWheel.steerAngle = steering;
@@ -229,7 +125,7 @@ namespace Common.Units
 					{
 						isOnWater = false;
 						pathDrawer.SetActive(false);
-						ladlePathDrawer.SetActive(isGroundContact);
+						ladlePathDrawer.SetActive(Control.IsContactGround());
 					}
 					else if(wheelHit.collider.CompareTag(worldGroundTag))
 					{
@@ -276,21 +172,8 @@ namespace Common.Units
 			visualWheel.rotation = rotation;
 		}
 
-
-		public void RotateByFactor(float factor)
-		{
-			steering = maxSteeringAngle * factor;
-		}
-		public void RotateLeft()
-		{
-			tweenRotate?.Kill();
-			tweenRotate = DOTween.To(val => steering = val, steering, -maxSteeringAngle, delaySteering).SetEase(Ease.Linear);
-		}
-		public void RotateRight()
-		{ 
-			tweenRotate?.Kill();
-			tweenRotate = DOTween.To(val => steering = val, steering, maxSteeringAngle, delaySteering).SetEase(Ease.Linear);
-		}
+		
+	
 
 		public void StopRotate()
 		{
@@ -300,53 +183,15 @@ namespace Common.Units
 				.OnComplete(()=>isStoppingRotate = true)
 				.SetEase(Ease.Linear);
 		}
-
-		public void DownLadle()
-		{
-			ladleMoveTween?.Kill();
-			ladleMoveTween = ladle.DOLocalMove(new Vector3(0,0.1f,ladleLocalPosition.z),0.35f )
-				.SetEase(Ease.Linear)
-				.OnComplete(()=>
-				{
-					cylinderGroundGameObject.SetActive(true);
-					isGroundContact = true;
-					ladlePathDrawer.SetActive(true);
-				});
-		}
-
-		public void UpLadle()
-		{
-			isGroundContact = false;
-
-			ladlePathDrawer.SetActive(false);
-
-			ladleMoveTween?.Kill();
-
-			ladleMoveTween = ladle.DOLocalMove(ladleLocalPosition,0.35f ).SetEase(Ease.Linear);
-		}
+		
 
 		private void Update()
 		{
 			if(IsGameOver) return;
 
-			if (!IsBot)
-			{
-				if (Input.GetKeyDown(KeyCode.Space))
-				{
-					DownLadle();
-				}
-
-				if (Input.GetKeyUp(KeyCode.Space))
-				{
-					UpLadle();
-				}
-			}
-			
-
 			
 			UpdateSizeCylinderGround();
 			
-
 		}
 
 
@@ -363,7 +208,7 @@ namespace Common.Units
 
 
 				float deltaCylinder = Time.deltaTime;
-				if (isGroundContact && !isOnWater)
+				if (Control.IsContactGround() && !isOnWater)
 				{
 					scale.x += deltaCylinder;
 					scale.z += deltaCylinder;
@@ -411,8 +256,9 @@ namespace Common.Units
 			}
 		}
 
+		public GameObject CylinderGroundGameObject => cylinderGroundGameObject;
 		public bool IsGameOver { get; set; }
 		public bool IsBot { get; set; }
-		public WayPoint[] Waypoints { get; set; }
+		public BaseControl Control { get; set; }
 	}
 }
