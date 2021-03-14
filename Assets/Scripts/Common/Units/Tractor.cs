@@ -111,34 +111,48 @@ namespace Common.Units
 					axleInfo.rightWheel.motorTorque = maxMotorTorque - absHorizontal;
 				}
 				
-				if (axleInfo.leftWheel.GetGroundHit(out var wheelHit))
+				if (axleInfo.leftWheel.GetGroundHit(out var leftWheelHit))
 				{
-					if (wheelHit.collider.CompareTag(waterTag))
-					{
-						isOnWater = true;
-						ladlePathDrawer.SetActive(false);
-						pathDrawer.SetActive(true);
-						if (!cylinderGroundGameObject.activeSelf)
-						{
-							CheckGameOver();
-						}
-					}
-					else if(wheelHit.collider.CompareTag(groundTag))
-					{
-						isOnWater = false;
-						pathDrawer.SetActive(false);
-						ladlePathDrawer.SetActive(Control.IsContactGround());
-					}
-					else if(wheelHit.collider.CompareTag(worldGroundTag))
-					{
-						pathDrawer.SetActive(false);
-
-						if(!IsBot)
-							CallGameOver();
-					}
+					CheckWheelHit(leftWheelHit);
 				}
+				else if (axleInfo.rightWheel.GetGroundHit(out var rightWheelHit))
+				{
+					CheckWheelHit(rightWheelHit);
+				}
+				
 				ApplyLocalPositionToVisuals(axleInfo.visualLeft,axleInfo.leftWheel);
 				ApplyLocalPositionToVisuals(axleInfo.visualRight,axleInfo.rightWheel);
+			}
+		}
+
+		/// <summary>
+		/// Определеяем коллизию колеса
+		/// </summary>
+		/// <param name="wheelHit"></param>
+		private void CheckWheelHit(WheelHit wheelHit)
+		{
+			if (wheelHit.collider.CompareTag(waterTag))
+			{
+				isOnWater = true;
+				ladlePathDrawer.SetActive(false);
+				pathDrawer.SetActive(true);
+				if (!cylinderGroundGameObject.activeSelf)
+				{
+					CheckGameOver();
+				}
+			}
+			else if(wheelHit.collider.CompareTag(groundTag))
+			{
+				isOnWater = false;
+				pathDrawer.SetActive(false);
+				ladlePathDrawer.SetActive(Control.IsContactGround());
+			}
+			else if(wheelHit.collider.CompareTag(worldGroundTag))
+			{
+				pathDrawer.SetActive(false);
+
+				if(!IsBot)
+					CallGameOver();
 			}
 		}
 
