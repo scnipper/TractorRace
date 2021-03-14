@@ -226,7 +226,7 @@ MonoBehaviour:
     motor: 1
     steering: 0
   maxMotorTorque: 125
-  maxSteeringAngle: 30
+  maxSteeringAngle: 20
   delaySteering: 0.3
   pathDrawer: {fileID: 6266517880398061720}
   ladlePathDrawer: {fileID: 4642217979054805197}

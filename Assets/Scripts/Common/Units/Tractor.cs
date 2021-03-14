@@ -10,9 +10,10 @@ namespace Common.Units
 		public Transform ladle;
 		public Transform cylinderGround;
 		public float maxSizeCylinder = 4;
-		
+
 		public AxleInfo[] axleInfos; // the information about each individual axle
 		public float maxMotorTorque;     // maximum torque the motor can apply to wheel
+		public float decelerationRotate = 20;
 		public float maxSteeringAngle;
 		public float delaySteering = 0.1f;
 		public GameObject pathDrawer;
@@ -105,8 +106,9 @@ namespace Common.Units
 					axleInfo.rightWheel.steerAngle = steering;
 				}
 				if (axleInfo.motor) {
-					axleInfo.leftWheel.motorTorque = maxMotorTorque;
-					axleInfo.rightWheel.motorTorque = maxMotorTorque;
+					float absHorizontal = decelerationRotate * Mathf.Abs(Control.GetHorizontal());
+					axleInfo.leftWheel.motorTorque = maxMotorTorque - absHorizontal;
+					axleInfo.rightWheel.motorTorque = maxMotorTorque - absHorizontal;
 				}
 				
 				if (axleInfo.leftWheel.GetGroundHit(out var wheelHit))
