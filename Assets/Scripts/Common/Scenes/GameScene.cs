@@ -90,7 +90,7 @@ namespace Common.Scenes
 				var botTractorControl = CreateControl(controlCpu) as BotTractorControl;
 				if (botTractorControl != null)
 				{
-					botTractorControl.Waypoints = mainWorld.waypoints;
+					botTractorControl.Waypoints = mainWorld.WayPoints;
 					botTractorControl.MainTractor = botTractor;
 				}
 				botTractor.Control = botTractorControl;
