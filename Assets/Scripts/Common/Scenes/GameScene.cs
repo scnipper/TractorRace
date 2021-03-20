@@ -75,7 +75,8 @@ namespace Common.Scenes
 				tractors.Add(botTractor);
 			}
 			playerCamera.Tractor = activeTractor.transform;
-			StartCoroutine(UpdatePlaceText());
+			if(tractors.Count  > 1)
+				StartCoroutine(UpdatePlaceText());
 		}
 
 		private BaseControl CreateControl(BaseControl control)
