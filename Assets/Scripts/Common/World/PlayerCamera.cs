@@ -50,7 +50,7 @@ namespace Common.World
 				else
 				{
 					var cameraPos = Tractor.position - Tractor.forward * 1.8f;
-					cameraPos.y = 1.7f;
+					cameraPos.y = 3F;
 
 					var rotationCamera = new Vector3(rotX,Tractor.eulerAngles.y,0);
 
