@@ -124,7 +124,7 @@ namespace Common.Control
 						wayPointIndex += wayPoint.passPointsWhenMoveToFast;
 					}
 
-					print($"Point: {wayPointIndex}/{Waypoints.Length}");
+					//print($"Point: {wayPointIndex}/{Waypoints.Length}");
 					if (wayPointIndex >= Waypoints.Length)
 					{
 						isBotMove = false;

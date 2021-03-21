@@ -147,20 +147,27 @@ namespace Common.Scenes
 			var tractorsTransform = tractors.Select(tr => tr.transform).ToList();
 			var activeTransform = activeTractor.transform;
 			isUpdatePlaceText = true;
+			var finishPointPosition = mainWorld.finishPoint.position;
+			finishPointPosition.y = 0;
 			while (isUpdatePlaceText)
 			{
 				distances.Clear();
 				foreach (var tr in tractorsTransform)
 				{
-					if(tr == null) yield break;
-					distances.Add((mainWorld.finishPoint.position - tr.position).sqrMagnitude);
+					if (tr != null)
+					{
+						var trPosition = tr.position;
+						trPosition.y = 0;
+						distances.Add((finishPointPosition - trPosition).sqrMagnitude);
+					}
 				}
 
-				var sortDistances = distances.OrderByDescending(dist=>dist).ToList();
-				
-				
+				var sortDistances = distances.OrderBy(dist=>dist).ToList();
 
-				var mainDistance = (mainWorld.finishPoint.position - activeTransform.position).sqrMagnitude;
+
+				var activeTransformPosition = activeTransform.position;
+				activeTransformPosition.y = 0;
+				var mainDistance = (finishPointPosition - activeTransformPosition).sqrMagnitude;
 
 				placeMainTractor = sortDistances.Count;
 				for (var i = 0; i < sortDistances.Count; i++)
@@ -168,6 +175,7 @@ namespace Common.Scenes
 					if (mainDistance < sortDistances[i])
 					{
 						placeMainTractor = i;
+						break;
 					}
 				}
 
