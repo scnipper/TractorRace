@@ -1,15 +1,14 @@
-using Common.Scenes;
+using Common.Control.Impl;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Common.Control
 {
-	public class StickTractorControl : MonoBehaviour,IDragHandler,IEndDragHandler
+	public class StickTractorControl : BaseControl,IDragHandler,IEndDragHandler
 	{
 		public RectTransform stick;
 		public RectTransform stickArea;
-		public GameScene gameScene;
 		private Vector2 offsetFromBorder;
 		private Vector2 defaultPositionStick;
 		private float workWidth;
@@ -17,6 +16,8 @@ namespace Common.Control
 		private Vector2 upDefault;
 		private Vector2 downDefault;
 		private bool isDownLadle;
+		private float deltaRotate;
+		private float deltaLadle;
 
 
 		private void Start()
@@ -46,25 +47,22 @@ namespace Common.Control
 				if (pos.x > rectWidth-offsetFromBorder.x) pos.x = rectWidth-offsetFromBorder.x;
 				if (pos.y < -rectHeight-offsetFromBorder.y) pos.y = -rectHeight-offsetFromBorder.y;
 
-				float halfW = workWidth/2;
-				float deltaRotate = (pos.x - offsetFromBorder.x-halfW)/ (workWidth-halfW);
+				float halfW = workWidth/2; 
+				deltaRotate = (pos.x - offsetFromBorder.x-halfW)/ (workWidth-halfW);
 
-				float deltaLadle = Mathf.Abs((pos.y - offsetFromBorder.y) / workHeight);
+				deltaLadle = Mathf.Abs((pos.y - offsetFromBorder.y) / workHeight);
 
 
 				if (deltaLadle >= 1 && !isDownLadle)
 				{
-					gameScene.ActiveTractor.DownLadle();
 					defaultPositionStick = downDefault;
 					isDownLadle = true;
 				}
 				else if(deltaLadle <= 0 && isDownLadle)
 				{
 					isDownLadle = false;
-					gameScene.ActiveTractor.UpLadle();
 					defaultPositionStick = upDefault;
 				}
-				gameScene.ActiveTractor.RotateByFactor(deltaRotate);
 				stick.anchoredPosition = pos;
 			}
 
@@ -74,15 +72,31 @@ namespace Common.Control
 		public void OnEndDrag(PointerEventData eventData)
 		{
 			stick.DOAnchorPos(defaultPositionStick, 0.08f).SetEase(Ease.Linear);
-			gameScene.ActiveTractor.RotateByFactor(0);
+			deltaRotate = 0;
 
 		}
 
-		public void ResetControl()
+
+		public override void ResetControl()
 		{
 			defaultPositionStick = upDefault;
 			stick.anchoredPosition = defaultPositionStick;
 			isDownLadle = false;
+		}
+
+		public override float GetHorizontal()
+		{
+			return deltaRotate;
+		}
+
+		public override float GetVertical()
+		{
+			return deltaLadle;
+		}
+
+		public override bool IsContactGround()
+		{
+			return isDownLadle;
 		}
 	}
 }

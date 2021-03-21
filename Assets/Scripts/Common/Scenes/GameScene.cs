@@ -2,67 +2,125 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Control;
+using Common.Control.Impl;
 using Common.Units;
 using Common.World;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
+using Util.Extensions;
 
 namespace Common.Scenes
 {
 	public class GameScene : MonoBehaviour
 	{
 		public Tractor tractor;
-		public Transform[] startPoints;
-		public Transform worldRoot;
 		public GameObject gameOverScreen;
 		public GameObject finishScreen;
 		public PlayerCamera playerCamera;
-		public WayPoint[] waypoints;
-		public StickTractorControl stickTractorControl;
-		public Transform finishPoint;
+		public BaseControl[] controlPlayer;
+		public Transform controlContainer;
+		public BaseControl controlCpu;
+		public AssetReference[] assetWorlds;
+		public Dropdown worldDropDown;
+		public Transform worldPlace;
+
 		public Text placeText;
+
+		private MainWorld mainWorld;
+		private int indexLoadWorld;
 		private Tractor activeTractor;
 		private List<Tractor> tractors;
 		private bool isUpdatePlaceText;
 		private int placeMainTractor;
+		private int lastUseControl;
 
 
 		private void Start()
 		{
 			tractors = new List<Tractor>();
-			CreateTractor();
+
+			for (var i = 0; i < assetWorlds.Length; i++)
+			{
+				worldDropDown.options.Add(new Dropdown.OptionData($"world {i+1}"));
+			}
+			worldDropDown.onValueChanged.AddListener(idWorld=>indexLoadWorld = idWorld);
+
+			worldDropDown.SetValueWithoutNotify(0);
+			worldDropDown.RefreshShownValue();
 		}
 
-		private void CreateTractor()
+		public void CreateTractor(int controlNum)
 		{
+			StartCoroutine(StartGame(controlNum));
+		}
+
+		private IEnumerator StartGame(int controlNum)
+		{
+			if(mainWorld == null)
+				yield return LoadWorld();
+			
+			var worldRoot = mainWorld.transform;
+
+			lastUseControl = controlNum;
 			playerCamera.ResetCamera();
 
 			isUpdatePlaceText = false;
-			stickTractorControl.ResetControl();
 			gameOverScreen.SetActive(false);
 			finishScreen.SetActive(false);
 			if (activeTractor != null)
 			{
 				Destroy(activeTractor.gameObject);
 			}
+			
+			controlContainer.ClearAllChildren();
 
 			ClearTractors();
-			activeTractor = Instantiate(tractor, startPoints[0].position, Quaternion.identity,worldRoot);
+			activeTractor = Instantiate(tractor, mainWorld.startPoints[0].position, Quaternion.identity,worldRoot);
 			activeTractor.onGameOver += GameOver;
 			activeTractor.onFinish += FinishGame;
+			activeTractor.Control = CreateControl(controlPlayer[controlNum]);
 
 			
-			for (var i = 1; i < startPoints.Length; i++)
+			for (var i = 1; i < mainWorld.startPoints.Length; i++)
 			{
-				var botTractor = Instantiate(tractor, startPoints[i].position, Quaternion.identity,worldRoot);
-				botTractor.Waypoints = waypoints;
+				var botTractor = Instantiate(tractor, mainWorld.startPoints[i].position, Quaternion.identity,worldRoot);
 				botTractor.IsBot = true;
 				botTractor.onFinish += FinishGame;
+				var botTractorControl = CreateControl(controlCpu) as BotTractorControl;
+				if (botTractorControl != null)
+				{
+					botTractorControl.Waypoints = mainWorld.WayPoints;
+					botTractorControl.MainTractor = botTractor;
+				}
+				botTractor.Control = botTractorControl;
 				tractors.Add(botTractor);
 			}
 			playerCamera.Tractor = activeTractor.transform;
-			StartCoroutine(UpdatePlaceText());
+			if(tractors.Count  > 1)
+				StartCoroutine(UpdatePlaceText());
 		}
+
+		/// <summary>
+		/// Загрузка мира
+		/// </summary>
+		private IEnumerator LoadWorld()
+		{
+			yield return assetWorlds[indexLoadWorld].LoadAssetAsync<GameObject>();
+
+			var prepareWorld = assetWorlds[indexLoadWorld].Asset;
+
+			var instWorld = Instantiate(prepareWorld, worldPlace) as GameObject;
+			if (instWorld != null) mainWorld = instWorld.GetComponent<MainWorld>();
+		}
+
+		private BaseControl CreateControl(BaseControl control)
+		{
+			var baseControl = Instantiate(control, controlContainer);
+			baseControl.ResetControl();
+			return baseControl;
+		}
+
 
 		/// <summary>
 		/// Когда доехали до финиша
@@ -89,20 +147,27 @@ namespace Common.Scenes
 			var tractorsTransform = tractors.Select(tr => tr.transform).ToList();
 			var activeTransform = activeTractor.transform;
 			isUpdatePlaceText = true;
+			var finishPointPosition = mainWorld.finishPoint.position;
+			finishPointPosition.y = 0;
 			while (isUpdatePlaceText)
 			{
 				distances.Clear();
 				foreach (var tr in tractorsTransform)
 				{
-					if(tr == null) yield break;
-					distances.Add((finishPoint.position - tr.position).sqrMagnitude);
+					if (tr != null)
+					{
+						var trPosition = tr.position;
+						trPosition.y = 0;
+						distances.Add((finishPointPosition - trPosition).sqrMagnitude);
+					}
 				}
 
-				var sortDistances = distances.OrderByDescending(dist=>dist).ToList();
-				
-				
+				var sortDistances = distances.OrderBy(dist=>dist).ToList();
 
-				var mainDistance = (finishPoint.position - activeTransform.position).sqrMagnitude;
+
+				var activeTransformPosition = activeTransform.position;
+				activeTransformPosition.y = 0;
+				var mainDistance = (finishPointPosition - activeTransformPosition).sqrMagnitude;
 
 				placeMainTractor = sortDistances.Count;
 				for (var i = 0; i < sortDistances.Count; i++)
@@ -110,6 +175,7 @@ namespace Common.Scenes
 					if (mainDistance < sortDistances[i])
 					{
 						placeMainTractor = i;
+						break;
 					}
 				}
 
@@ -141,9 +207,7 @@ namespace Common.Scenes
 
 		public void RestartGame()
 		{
-			CreateTractor();
+			CreateTractor(lastUseControl);
 		}
-
-		public Tractor ActiveTractor => activeTractor;
 	}
 }
