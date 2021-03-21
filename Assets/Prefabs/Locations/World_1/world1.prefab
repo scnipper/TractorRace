@@ -123,7 +123,7 @@ Transform:
   m_LocalScale: {x: 25.609179, y: 3.6, z: 3.275}
   m_Children: []
   m_Father: {fileID: 255727504436837504}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &255727502812301295
 MeshFilter:
@@ -196,7 +196,7 @@ Transform:
   - {fileID: 8136063662787696201}
   - {fileID: 3656534830344701281}
   m_Father: {fileID: 255727504436837504}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &255727503138423473
 GameObject:
@@ -226,7 +226,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 255727504436837504}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &255727503170840496
 GameObject:
@@ -627,6 +627,8 @@ Transform:
   - {fileID: 255727503571548008}
   - {fileID: 255727503238504765}
   - {fileID: 5091101189218065575}
+  - {fileID: 7588818510917658848}
+  - {fileID: 3865906946725010778}
   - {fileID: 255727503138423478}
   - {fileID: 255727502816737182}
   - {fileID: 255727502812301289}
@@ -650,6 +652,8 @@ MonoBehaviour:
   startPoints:
   - {fileID: 255727503238504765}
   - {fileID: 5091101189218065575}
+  - {fileID: 7588818510917658848}
+  - {fileID: 3865906946725010778}
   finishPoint: {fileID: 255727502812301289}
   roadMask: {fileID: 399951515105590189}
 --- !u!1 &399951515105590189
@@ -678,10 +682,10 @@ Transform:
   m_GameObject: {fileID: 399951515105590189}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 50, y: 1.51, z: 50}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 4.9, y: 4.9, z: 1}
   m_Children: []
   m_Father: {fileID: 255727504436837504}
-  m_RootOrder: 7
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!212 &1871824198404896347
 SpriteRenderer:
@@ -733,6 +737,36 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &5142319229761604069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7588818510917658848}
+  m_Layer: 0
+  m_Name: StartPoint3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7588818510917658848
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142319229761604069}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 54.18, y: 1.69, z: 3.34}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 255727504436837504}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8682175734742155588
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,6 +796,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 255727504436837504}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8951353763745282989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3865906946725010778}
+  m_Layer: 0
+  m_Name: StartPoint4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3865906946725010778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8951353763745282989}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 53.21, y: 1.69, z: 4.07}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 255727504436837504}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1658204479028485582
 PrefabInstance:
@@ -1074,6 +1138,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isUseFastPoint
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
@@ -1555,6 +1624,11 @@ PrefabInstance:
       propertyPath: isUseFastPoint
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1643,6 +1717,11 @@ PrefabInstance:
     - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
@@ -1885,6 +1964,11 @@ PrefabInstance:
       propertyPath: isUseFastPoint
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2123,6 +2207,11 @@ PrefabInstance:
     - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,

@@ -107,8 +107,13 @@ namespace Common.Units
 				}
 				if (axleInfo.motor) {
 					float absHorizontal = decelerationRotate * Mathf.Abs(Control.GetHorizontal());
-					axleInfo.leftWheel.motorTorque = maxMotorTorque - absHorizontal;
-					axleInfo.rightWheel.motorTorque = maxMotorTorque - absHorizontal;
+					float motorTorque = maxMotorTorque - absHorizontal;
+					if (IsBot)
+					{
+						motorTorque += motorTorque * 0.1f;
+					}
+					axleInfo.leftWheel.motorTorque = motorTorque;
+					axleInfo.rightWheel.motorTorque = motorTorque;
 				}
 				
 				if (axleInfo.leftWheel.GetGroundHit(out var leftWheelHit))

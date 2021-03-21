@@ -621,7 +621,7 @@ Transform:
   m_GameObject: {fileID: 399951515105590189}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 50, y: 1.51, z: 50}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 4.9, y: 4.9, z: 1}
   m_Children: []
   m_Father: {fileID: 255727504436837504}
   m_RootOrder: 7
@@ -1464,6 +1464,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.9
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -1539,6 +1559,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -1914,6 +1944,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.21
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -2439,6 +2489,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -2664,6 +2734,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.14
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -2814,6 +2899,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -3039,6 +3144,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.93
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.75
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -3339,6 +3464,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.58
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -3564,6 +3704,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.11
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name
@@ -3714,6 +3874,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 255727502816737182}
     m_Modifications:
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: isUseFastPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 788151605626309773, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: passPointsWhenMoveToFast
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514756668059803040, guid: fe6ef72c821374ffe9047a31a75a7c1d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.96
+      objectReference: {fileID: 0}
     - target: {fileID: 5223472166789356442, guid: fe6ef72c821374ffe9047a31a75a7c1d,
         type: 3}
       propertyPath: m_Name

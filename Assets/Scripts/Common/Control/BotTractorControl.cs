@@ -29,8 +29,9 @@ namespace Common.Control
 			bool waitWhenNorm = false;
 
 			float timeWaitWhenLadleUp = 0;
-			
 
+
+			bool isMoveToFast = false;
 			
 			while (isBotMove)
 			{
@@ -38,11 +39,13 @@ namespace Common.Control
 
 				var pointToMove = wayPoint.mainPoint;
 
+				float rangeMinusMaxSizeCylinder = Random.Range(1, 2.5f);
 				// двигаемся в обрез пути
 				if (wayPoint.isUseFastPoint && MainTractor.CylinderGroundGameObject.activeSelf
-											&& MainTractor.cylinderGround.localScale.x >= MainTractor.maxSizeCylinder-1)
+											&& MainTractor.cylinderGround.localScale.x >= MainTractor.maxSizeCylinder-rangeMinusMaxSizeCylinder)
 				{
 					pointToMove = wayPoint.fastPoint;
+					isMoveToFast = true;
 				}
 
 				if (timeWaitWhenLadleUp > 0)
@@ -116,11 +119,19 @@ namespace Common.Control
 
 					wayPointIndex++;
 
+					if (isMoveToFast)
+					{
+						wayPointIndex += wayPoint.passPointsWhenMoveToFast;
+					}
+
+					print($"Point: {wayPointIndex}/{Waypoints.Length}");
 					if (wayPointIndex >= Waypoints.Length)
 					{
 						isBotMove = false;
+						print("End bot move");
 					}
 
+					isMoveToFast = false;
 					steering = 0;
 
 				}
