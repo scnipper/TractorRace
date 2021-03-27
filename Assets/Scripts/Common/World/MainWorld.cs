@@ -9,20 +9,34 @@ namespace Common.World
 		public Transform[] startPoints;
 		public Transform finishPoint;
 		public GameObject roadMask;
+		public Camera[] worldCameras;
 
 
 		private void Awake()
 		{
 			WayPoints = wayPointsContainer.GetComponentsInChildren<WayPoint>();
 		}
-		
 
-		private IEnumerator Start()
+		/// <summary>
+		/// Очистка всех путей движения
+		/// </summary>
+		public void ResetWorldCameras()
 		{
-
-			yield return null;
-			roadMask.SetActive(false);
+			StartCoroutine(ClearCameras());
 		}
+
+		private IEnumerator ClearCameras()
+		{
+			foreach (var worldCamera in worldCameras)
+			{
+				worldCamera.clearFlags = CameraClearFlags.Color;
+				roadMask.SetActive(true);
+				yield return null;
+				worldCamera.clearFlags = CameraClearFlags.Nothing;
+				roadMask.SetActive(false);
+			}
+		}
+		
 
 		public WayPoint[] WayPoints { get; set; }
 	}

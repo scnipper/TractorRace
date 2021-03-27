@@ -62,6 +62,7 @@ namespace Common.Scenes
 			
 			var worldRoot = mainWorld.transform;
 
+			mainWorld.ResetWorldCameras();
 			lastUseControl = controlNum;
 			playerCamera.ResetCamera();
 
@@ -164,6 +165,7 @@ namespace Common.Scenes
 
 				var sortDistances = distances.OrderBy(dist=>dist).ToList();
 
+				if(activeTransform == null) yield break;
 
 				var activeTransformPosition = activeTransform.position;
 				activeTransformPosition.y = 0;
