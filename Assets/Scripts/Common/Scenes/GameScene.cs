@@ -17,6 +17,7 @@ namespace Common.Scenes
 		public Tractor tractor;
 		public GameObject gameOverScreen;
 		public GameObject finishScreen;
+		public GameObject loadingScreen;
 		public PlayerCamera playerCamera;
 		public BaseControl[] controlPlayer;
 		public Transform controlContainer;
@@ -107,12 +108,15 @@ namespace Common.Scenes
 		/// </summary>
 		private IEnumerator LoadWorld()
 		{
+			loadingScreen.SetActive(true);
 			yield return assetWorlds[indexLoadWorld].LoadAssetAsync<GameObject>();
 
 			var prepareWorld = assetWorlds[indexLoadWorld].Asset;
 
 			var instWorld = Instantiate(prepareWorld, worldPlace) as GameObject;
 			if (instWorld != null) mainWorld = instWorld.GetComponent<MainWorld>();
+			yield return null;
+			loadingScreen.SetActive(false);
 		}
 
 		private BaseControl CreateControl(BaseControl control)
