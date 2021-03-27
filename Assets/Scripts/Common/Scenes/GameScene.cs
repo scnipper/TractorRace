@@ -7,6 +7,7 @@ using Common.Units;
 using Common.World;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Util.Extensions;
 
@@ -14,10 +15,12 @@ namespace Common.Scenes
 {
 	public class GameScene : MonoBehaviour
 	{
+		private const string Name = "GameScene";
 		public Tractor tractor;
 		public GameObject gameOverScreen;
 		public GameObject finishScreen;
 		public GameObject loadingScreen;
+		public GameObject pauseScreen;
 		public PlayerCamera playerCamera;
 		public BaseControl[] controlPlayer;
 		public Transform controlContainer;
@@ -51,6 +54,24 @@ namespace Common.Scenes
 			worldDropDown.RefreshShownValue();
 		}
 
+		public void ReloadScene()
+		{
+			foreach (var assetReference in assetWorlds)
+			{
+				assetReference.ReleaseAsset();
+			}
+
+			SceneManager.LoadScene(Name);
+		}
+		/// <summary>
+		/// Постановка игры на паузу
+		/// </summary>
+		/// <param name="isPause"></param>
+		public void PauseGame(bool isPause)
+		{
+			pauseScreen.SetActive(isPause);
+			Time.timeScale = isPause ? 0 : 1;
+		}
 		public void CreateTractor(int controlNum)
 		{
 			StartCoroutine(StartGame(controlNum));
