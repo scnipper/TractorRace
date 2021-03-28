@@ -11,7 +11,7 @@ namespace Common.Control
 		public float timeRotate = 0.25f;
 		private Vector2 sizeInput;
 		private float axisHorizontal;
-		private Tweener tween;
+		private Sequence tween;
 		private Tweener tweenLadle;
 		private float ladleDelta;
 		private bool isGroundContact;
@@ -50,17 +50,18 @@ namespace Common.Control
 			UpLadle();
 			var halfWidth = sizeInput.x / 2;
 			tween?.Kill();
-			if (eventData.position.x > halfWidth)
-			{
-				tween = DOTween.To(value => axisHorizontal = value, axisHorizontal, 1, timeRotate);
-			}
-			else
-			{
-				tween = DOTween.To(value => axisHorizontal = value, axisHorizontal, -1, timeRotate);
-			}
+			Rotate(eventData.position.x > halfWidth);
 		}
-		
-		
+
+		private void Rotate(bool isRight)
+		{
+			tween = DOTween.Sequence();
+				
+			tween.Append(DOTween.To(value => axisHorizontal = value, axisHorizontal, isRight ? 0.5f : -0.5f, timeRotate));
+			tween.Append(DOTween.To(value => axisHorizontal = value, axisHorizontal, isRight ? 1f : -1f, timeRotate));
+		}
+
+
 		private void UpLadle()
 		{
 			tweenLadle?.Kill();
@@ -84,7 +85,8 @@ namespace Common.Control
 			delayDown = 0.5f;
 
 			tween?.Kill();
-			tween = DOTween.To(value => axisHorizontal = value, axisHorizontal, 0, timeRotate);
+			tween = DOTween.Sequence()
+				.Append(DOTween.To(value => axisHorizontal = value, axisHorizontal, 0, timeRotate));
 		}
 
 		public override float GetHorizontal()
