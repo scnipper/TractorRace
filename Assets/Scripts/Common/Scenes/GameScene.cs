@@ -7,16 +7,21 @@ using Common.Units;
 using Common.World;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Util;
 using Util.Extensions;
 
 namespace Common.Scenes
 {
 	public class GameScene : MonoBehaviour
 	{
+		private const string Name = "GameScene";
 		public Tractor tractor;
 		public GameObject gameOverScreen;
 		public GameObject finishScreen;
+		public GameObject loadingScreen;
+		public GameObject pauseScreen;
 		public PlayerCamera playerCamera;
 		public BaseControl[] controlPlayer;
 		public Transform controlContainer;
@@ -24,6 +29,7 @@ namespace Common.Scenes
 		public AssetReference[] assetWorlds;
 		public Dropdown worldDropDown;
 		public Transform worldPlace;
+		public GameObject backMoveText;
 
 		public Text placeText;
 
@@ -50,6 +56,24 @@ namespace Common.Scenes
 			worldDropDown.RefreshShownValue();
 		}
 
+		public void ReloadScene()
+		{
+			foreach (var assetReference in assetWorlds)
+			{
+				assetReference.ReleaseAsset();
+			}
+
+			SceneManager.LoadScene(Name);
+		}
+		/// <summary>
+		/// Постановка игры на паузу
+		/// </summary>
+		/// <param name="isPause"></param>
+		public void PauseGame(bool isPause)
+		{
+			pauseScreen.SetActive(isPause);
+			Time.timeScale = isPause ? 0 : 1;
+		}
 		public void CreateTractor(int controlNum)
 		{
 			StartCoroutine(StartGame(controlNum));
@@ -62,6 +86,7 @@ namespace Common.Scenes
 			
 			var worldRoot = mainWorld.transform;
 
+			mainWorld.ResetWorldCameras();
 			lastUseControl = controlNum;
 			playerCamera.ResetCamera();
 
@@ -81,7 +106,10 @@ namespace Common.Scenes
 			activeTractor.onFinish += FinishGame;
 			activeTractor.Control = CreateControl(controlPlayer[controlNum]);
 
-			
+			var activeTractorTransform = activeTractor.transform;
+
+			StartCoroutine(CheckingActiveTractorMoveBack(activeTractorTransform));
+
 			for (var i = 1; i < mainWorld.startPoints.Length; i++)
 			{
 				var botTractor = Instantiate(tractor, mainWorld.startPoints[i].position, Quaternion.identity,worldRoot);
@@ -96,9 +124,28 @@ namespace Common.Scenes
 				botTractor.Control = botTractorControl;
 				tractors.Add(botTractor);
 			}
-			playerCamera.Tractor = activeTractor.transform;
+			playerCamera.Tractor = activeTractorTransform;
 			if(tractors.Count  > 1)
 				StartCoroutine(UpdatePlaceText());
+		}
+
+		/// <summary>
+		/// Проверка того что трактор игрока едет назад
+		/// </summary>
+		/// <param name="activeTractorTransform"></param>
+		/// <returns></returns>
+		private IEnumerator CheckingActiveTractorMoveBack(Transform activeTractorTransform)
+		{
+			while (activeTractorTransform != null)
+			{
+				bool isMoveBack = mainWorld.IsLookNearestToBackPoint(activeTractorTransform);
+				
+				backMoveText.SetActive(isMoveBack);
+				activeTractor.Control.ForceUpLadle(isMoveBack);
+				yield return Yielders.WaitSecond(0.2f);
+			}
+
+			yield return null;
 		}
 
 		/// <summary>
@@ -106,12 +153,15 @@ namespace Common.Scenes
 		/// </summary>
 		private IEnumerator LoadWorld()
 		{
+			loadingScreen.SetActive(true);
 			yield return assetWorlds[indexLoadWorld].LoadAssetAsync<GameObject>();
 
 			var prepareWorld = assetWorlds[indexLoadWorld].Asset;
 
 			var instWorld = Instantiate(prepareWorld, worldPlace) as GameObject;
 			if (instWorld != null) mainWorld = instWorld.GetComponent<MainWorld>();
+			yield return null;
+			loadingScreen.SetActive(false);
 		}
 
 		private BaseControl CreateControl(BaseControl control)
@@ -164,6 +214,7 @@ namespace Common.Scenes
 
 				var sortDistances = distances.OrderBy(dist=>dist).ToList();
 
+				if(activeTransform == null) yield break;
 
 				var activeTransformPosition = activeTransform.position;
 				activeTransformPosition.y = 0;
@@ -183,7 +234,7 @@ namespace Common.Scenes
 				placeText.text = $"Place: {placeMainTractor + 1}/{distances.Count + 1}";
 				
 
-				yield return new WaitForSeconds(0.3f);
+				yield return Yielders.WaitSecond(0.3f);
 			}
 		}
 

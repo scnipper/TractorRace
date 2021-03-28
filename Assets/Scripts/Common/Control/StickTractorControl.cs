@@ -84,6 +84,11 @@ namespace Common.Control
 			isDownLadle = false;
 		}
 
+		public override void ForceUpLadle(bool isMoveBack)
+		{
+			
+		}
+
 		public override float GetHorizontal()
 		{
 			return deltaRotate;

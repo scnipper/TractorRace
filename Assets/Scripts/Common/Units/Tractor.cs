@@ -35,7 +35,6 @@ namespace Common.Units
 		private static string worldGroundTag = "WorldGround";
 		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
-		private Transform trTractor;
 		private bool isStoppingRotate = true;
 
 		[Serializable]
@@ -58,7 +57,6 @@ namespace Common.Units
 				.SetEase(Ease.Linear)
 				.SetLoops(-1, LoopType.Incremental);
 
-			trTractor = transform;
 		}
 
 		

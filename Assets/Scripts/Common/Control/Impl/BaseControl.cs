@@ -9,5 +9,7 @@ namespace Common.Control.Impl
 
 		public abstract bool IsContactGround();
 		public abstract void ResetControl();
+
+		public abstract void ForceUpLadle(bool isMoveBack);
 	}
 }

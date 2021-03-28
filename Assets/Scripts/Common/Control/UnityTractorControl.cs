@@ -9,25 +9,32 @@ namespace Common.Control
 		private float ladleDelta;
 		private bool isGroundContact;
 		private Tweener tweenLadle;
+		private bool isSpaceDown;
 
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				tweenLadle?.Kill();
-				tweenLadle = DOTween.To(value => ladleDelta = value, ladleDelta, 1, 0.35f)
-					.SetEase(Ease.Linear)
-					.OnComplete(() => isGroundContact = true);
+				isSpaceDown = true;
+				MoveLadle(true);
 			}
 
 			if (Input.GetKeyUp(KeyCode.Space))
 			{
-				tweenLadle?.Kill();
-				tweenLadle = DOTween.To(value => ladleDelta = value, ladleDelta, 0, 0.35f)
-					.SetEase(Ease.Linear)
-					.OnComplete(() => isGroundContact = false);
+				isSpaceDown = false;
+				MoveLadle(false);
 			}
 		}
+
+		private void MoveLadle(bool isDown)
+		{
+			print("move ladle is down "+isDown);
+			tweenLadle?.Kill();
+			tweenLadle = DOTween.To(value => ladleDelta = value, ladleDelta, isDown ? 1:0, 0.35f)
+				.SetEase(Ease.Linear)
+				.OnComplete(() => isGroundContact = isDown);
+		}
+
 
 		public override float GetHorizontal()
 		{
@@ -48,6 +55,14 @@ namespace Common.Control
 		{
 			isGroundContact = false;
 			ladleDelta = 0;
+		}
+
+		public override void ForceUpLadle(bool isMoveBack)
+		{
+			if (isSpaceDown)
+			{
+				isGroundContact = !isMoveBack;
+			}
 		}
 	}
 }

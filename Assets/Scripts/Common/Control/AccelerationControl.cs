@@ -90,5 +90,10 @@ namespace Common.Control
 		{
 			
 		}
+
+		public override void ForceUpLadle(bool isMoveBack)
+		{
+			
+		}
 	}
 }
