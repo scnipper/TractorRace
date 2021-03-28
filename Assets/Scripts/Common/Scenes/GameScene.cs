@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Util;
 using Util.Extensions;
 
 namespace Common.Scenes
@@ -28,6 +29,7 @@ namespace Common.Scenes
 		public AssetReference[] assetWorlds;
 		public Dropdown worldDropDown;
 		public Transform worldPlace;
+		public GameObject backMoveText;
 
 		public Text placeText;
 
@@ -104,7 +106,10 @@ namespace Common.Scenes
 			activeTractor.onFinish += FinishGame;
 			activeTractor.Control = CreateControl(controlPlayer[controlNum]);
 
-			
+			var activeTractorTransform = activeTractor.transform;
+
+			StartCoroutine(CheckingActiveTractorMoveBack(activeTractorTransform));
+
 			for (var i = 1; i < mainWorld.startPoints.Length; i++)
 			{
 				var botTractor = Instantiate(tractor, mainWorld.startPoints[i].position, Quaternion.identity,worldRoot);
@@ -119,9 +124,28 @@ namespace Common.Scenes
 				botTractor.Control = botTractorControl;
 				tractors.Add(botTractor);
 			}
-			playerCamera.Tractor = activeTractor.transform;
+			playerCamera.Tractor = activeTractorTransform;
 			if(tractors.Count  > 1)
 				StartCoroutine(UpdatePlaceText());
+		}
+
+		/// <summary>
+		/// Проверка того что трактор игрока едет назад
+		/// </summary>
+		/// <param name="activeTractorTransform"></param>
+		/// <returns></returns>
+		private IEnumerator CheckingActiveTractorMoveBack(Transform activeTractorTransform)
+		{
+			while (activeTractorTransform != null)
+			{
+				bool isMoveBack = mainWorld.IsLookNearestToBackPoint(activeTractorTransform);
+				
+				backMoveText.SetActive(isMoveBack);
+				activeTractor.Control.ForceUpLadle(isMoveBack);
+				yield return Yielders.WaitSecond(0.2f);
+			}
+
+			yield return null;
 		}
 
 		/// <summary>
@@ -210,7 +234,7 @@ namespace Common.Scenes
 				placeText.text = $"Place: {placeMainTractor + 1}/{distances.Count + 1}";
 				
 
-				yield return new WaitForSeconds(0.3f);
+				yield return Yielders.WaitSecond(0.3f);
 			}
 		}
 

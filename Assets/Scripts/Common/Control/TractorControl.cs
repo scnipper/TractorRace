@@ -82,5 +82,10 @@ namespace Common.Control
 
 			axisHorizontal = 0;
 		}
+
+		public override void ForceUpLadle(bool isMoveBack)
+		{
+			isGroundContact = !isMoveBack;
+		}
 	}
 }

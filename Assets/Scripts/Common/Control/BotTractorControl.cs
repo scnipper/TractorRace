@@ -180,6 +180,11 @@ namespace Common.Control
 			
 		}
 
+		public override void ForceUpLadle(bool isMoveBack)
+		{
+			
+		}
+
 		public WayPoint[] Waypoints { get; set; }
 
 		public Tractor MainTractor { get; set; }
