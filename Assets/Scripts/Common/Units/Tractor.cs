@@ -237,7 +237,7 @@ namespace Common.Units
 						scale.z = maxSizeCylinder;
 					}
 				}
-				else
+				else if(isOnWater)
 				{
 					scale.x -= deltaCylinder;
 					scale.z -= deltaCylinder;

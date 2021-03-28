@@ -1,3 +1,4 @@
+using System.Collections;
 using Common.Control.Impl;
 using DG.Tweening;
 using UnityEngine;
@@ -14,14 +15,39 @@ namespace Common.Control
 		private Tweener tweenLadle;
 		private float ladleDelta;
 		private bool isGroundContact;
+		private bool isDown;
+		private float delayDown;
 
 		private void Start()
 		{
 			sizeInput = GetComponent<RectTransform>().rect.size;
 			DownLadle();
+			StartCoroutine(DelayDown());
 		}
+		
+		private IEnumerator DelayDown()
+		{
+			while (true)
+			{
+				if (delayDown > 0)
+				{
+					delayDown -= Time.deltaTime;
+					if (delayDown <= 0)
+					{
+						if(!isDown) DownLadle();
+					}
+				}
+				
+
+				yield return null;
+			}
+		}
+		
 		public void OnPointerDown(PointerEventData eventData)
 		{
+			isDown = true;
+			delayDown = 0;
+			UpLadle();
 			var halfWidth = sizeInput.x / 2;
 			tween?.Kill();
 			Rotate(eventData.position.x > halfWidth);
@@ -55,6 +81,8 @@ namespace Common.Control
 
 		public void OnPointerUp(PointerEventData eventData)
 		{
+			isDown = false;
+			delayDown = 0.5f;
 
 			tween?.Kill();
 			tween = DOTween.Sequence()
@@ -85,7 +113,7 @@ namespace Common.Control
 
 		public override void ForceUpLadle(bool isMoveBack)
 		{
-			isGroundContact = !isMoveBack;
+			//isGroundContact = !isMoveBack;
 		}
 	}
 }
