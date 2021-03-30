@@ -36,6 +36,7 @@ namespace Common.Units
 		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
 		private bool isStoppingRotate = true;
+		private bool isMaxCylinder;
 
 		[Serializable]
 		public class AxleInfo {
@@ -148,7 +149,7 @@ namespace Common.Units
 			{
 				isOnWater = false;
 				pathDrawer.SetActive(false);
-				ladlePathDrawer.SetActive(Control.IsContactGround());
+				ladlePathDrawer.SetActive(Control.IsContactGround() && !isMaxCylinder);
 			}
 			else if(wheelHit.collider.CompareTag(worldGroundTag))
 			{
@@ -233,14 +234,20 @@ namespace Common.Units
 					scale.z += deltaCylinder;
 					if (scale.x >= maxSizeCylinder)
 					{
+						isMaxCylinder = true;
 						scale.x = maxSizeCylinder;
 						scale.z = maxSizeCylinder;
+					}
+					else
+					{
+						isMaxCylinder = false;
 					}
 				}
 				else if(isOnWater)
 				{
 					scale.x -= deltaCylinder;
 					scale.z -= deltaCylinder;
+					isMaxCylinder = false;
 					if (scale.x <= saveCylinderScale.x)
 					{
 						scale = saveCylinderScale;
