@@ -1,5 +1,10 @@
+using System;
 using System.Collections;
+using Common.Units;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
+using Util;
 
 namespace Common.World
 {
@@ -12,11 +17,59 @@ namespace Common.World
 		public Transform finishPoint;
 		public GameObject roadMask;
 		public Camera[] worldCameras;
+		public Camera lowCameraWorld;
+		public Vector2 worldSize = new Vector2(100,100);
+		
+		private Texture2D textureWithPos;
+		private bool isCanReadLowTexture = true;
 
 
 		private void Awake()
 		{
 			WayPoints = wayPointsContainer.GetComponentsInChildren<WayPoint>();
+			var targetTexture = lowCameraWorld.targetTexture;
+			textureWithPos = new Texture2D(targetTexture.width,targetTexture.height,targetTexture.graphicsFormat,TextureCreationFlags.None);
+			StartCoroutine(ReadTextureCamera());
+		}
+
+		private IEnumerator ReadTextureCamera()
+		{
+			while (true)
+			{
+				yield return Yielders.EndOfFrame;
+				if (isCanReadLowTexture)
+				{
+					isCanReadLowTexture = false;
+					AsyncGPUReadback.Request(lowCameraWorld.targetTexture, 0, ret =>
+					{
+						var nativeArray = ret.GetData<uint>();
+						textureWithPos.LoadRawTextureData(nativeArray);
+						textureWithPos.Apply();
+						isCanReadLowTexture = true;
+					});
+				}
+				
+			}
+		}
+
+		/// <summary>
+		/// Определяем текущее положение на чем находится трактор
+		/// </summary>
+		/// <param name="position"></param>
+		/// <returns></returns>
+		public PlaceTractor GetCurrentPlaceTractor(Vector3 position)
+		{
+			float worldSizeX = position.x / worldSize.x;
+			float worldSizeY = position.z / worldSize.y;
+
+			Vector2Int pixelPosition = new Vector2Int((int) (textureWithPos.width * worldSizeX),(int) (textureWithPos.height * worldSizeY));
+
+			var pixel = textureWithPos.GetPixel(pixelPosition.x,pixelPosition.y);
+
+			if (Math.Abs(pixel.g - 1) < 0.05f) return PlaceTractor.Ground;
+			if (Math.Abs(pixel.r - 1) < 0.05f) return PlaceTractor.WaterBridge;
+
+			return PlaceTractor.none;
 		}
 
 		/// <summary>

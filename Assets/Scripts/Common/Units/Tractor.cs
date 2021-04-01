@@ -1,5 +1,6 @@
 using System;
 using Common.Control.Impl;
+using Common.World;
 using DG.Tweening;
 using UnityEngine;
 
@@ -37,6 +38,7 @@ namespace Common.Units
 		private bool isOnWater;
 		private bool isStoppingRotate = true;
 		private bool isMaxCylinder;
+		private Transform trTractor;
 
 		[Serializable]
 		public class AxleInfo {
@@ -49,6 +51,8 @@ namespace Common.Units
 		}
 		private void Start()
 		{
+			trTractor = transform;
+
 			cylinderGroundGameObject = cylinderGround.gameObject;
 			saveCylinderScale = cylinderGround.localScale;
 			cylinderGroundGameObject.SetActive(false);
@@ -209,7 +213,8 @@ namespace Common.Units
 		{
 			if(IsGameOver) return;
 
-			
+			if(!IsBot)
+				print("POS TRACTOR: "+World.GetCurrentPlaceTractor(trTractor.position));
 			UpdateSizeCylinderGround();
 			
 		}
@@ -286,5 +291,6 @@ namespace Common.Units
 		public bool IsGameOver { get; set; }
 		public bool IsBot { get; set; }
 		public BaseControl Control { get; set; }
+		public MainWorld World { get; set; }
 	}
 }

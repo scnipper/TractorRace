@@ -104,6 +104,7 @@ namespace Common.Scenes
 			activeTractor = Instantiate(tractor, mainWorld.startPoints[0].position, Quaternion.identity,worldRoot);
 			activeTractor.onGameOver += GameOver;
 			activeTractor.onFinish += FinishGame;
+			activeTractor.World = mainWorld;
 			activeTractor.Control = CreateControl(controlPlayer[controlNum]);
 
 			var activeTractorTransform = activeTractor.transform;
@@ -115,6 +116,7 @@ namespace Common.Scenes
 				var botTractor = Instantiate(tractor, mainWorld.startPoints[i].position, Quaternion.identity,worldRoot);
 				botTractor.IsBot = true;
 				botTractor.onFinish += FinishGame;
+				botTractor.World = mainWorld;
 				var botTractorControl = CreateControl(controlCpu) as BotTractorControl;
 				if (botTractorControl != null)
 				{
