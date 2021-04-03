@@ -10,6 +10,9 @@ namespace Common.World
 		[Header("Сколько пропустить следующих вейпоинтов при сокращении")]
 		public int passPointsWhenMoveToFast;
 
+		[Header("Ширина рандомной позиции слева направо")]
+		public float widthPoint = 1.5f;
+
 		private void Start()
 		{
 			if(!isUseFastPoint) Destroy(fastPoint.gameObject);

@@ -30,6 +30,7 @@ namespace Common.Control
 
 			float timeWaitWhenLadleUp = 0;
 
+			Transform pointToMove = null;
 
 			bool isMoveToFast = false;
 			
@@ -37,16 +38,34 @@ namespace Common.Control
 			{
 				var wayPoint = Waypoints[wayPointIndex];
 
-				var pointToMove = wayPoint.mainPoint;
-
-				float rangeMinusMaxSizeCylinder = Random.Range(1, 2.5f);
-				// двигаемся в обрез пути
-				if (wayPoint.isUseFastPoint && MainTractor.CylinderGroundGameObject.activeSelf
-											&& MainTractor.cylinderGround.localScale.x >= MainTractor.maxSizeCylinder-rangeMinusMaxSizeCylinder)
+				if (pointToMove == null)
 				{
-					pointToMove = wayPoint.fastPoint;
-					isMoveToFast = true;
+					pointToMove = wayPoint.mainPoint;
+
+					float rangeMinusMaxSizeCylinder = Random.Range(1, 2.5f);
+					// двигаемся в обрез пути
+					if (wayPoint.isUseFastPoint && MainTractor.CylinderGroundGameObject.activeSelf
+												&& MainTractor.cylinderGround.localScale.x >=
+												MainTractor.maxSizeCylinder - rangeMinusMaxSizeCylinder)
+					{
+						pointToMove = wayPoint.fastPoint;
+						isMoveToFast = true;
+					}
+
+
+
+					var moveHerePoint = new GameObject("MOVE_HERE").transform;
+
+					moveHerePoint.SetParent(pointToMove);
+
+					var pointRight = pointToMove.right;
+					moveHerePoint.localPosition =
+						pointRight * -(wayPoint.widthPoint / 2) + pointRight * Random.Range(0, wayPoint.widthPoint);
+
+					pointToMove = moveHerePoint;
 				}
+
+
 
 				if (timeWaitWhenLadleUp > 0)
 				{
@@ -119,6 +138,10 @@ namespace Common.Control
 
 					wayPointIndex++;
 
+					if (pointToMove != null)
+					{
+						Destroy(pointToMove.gameObject);
+					}
 					if (isMoveToFast)
 					{
 						wayPointIndex += wayPoint.passPointsWhenMoveToFast;
