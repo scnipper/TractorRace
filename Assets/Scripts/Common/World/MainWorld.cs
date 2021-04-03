@@ -42,10 +42,13 @@ namespace Common.World
 					isCanReadLowTexture = false;
 					AsyncGPUReadback.Request(lowCameraWorld.targetTexture, 0, ret =>
 					{
-						var nativeArray = ret.GetData<uint>();
-						textureWithPos.LoadRawTextureData(nativeArray);
-						textureWithPos.Apply();
-						isCanReadLowTexture = true;
+						if (textureWithPos != null)
+						{
+							var nativeArray = ret.GetData<uint>();
+							textureWithPos.LoadRawTextureData(nativeArray);
+							textureWithPos.Apply();
+							isCanReadLowTexture = true;
+						}
 					});
 				}
 				
@@ -64,6 +67,63 @@ namespace Common.World
 
 			Vector2Int pixelPosition = new Vector2Int((int) (textureWithPos.width * worldSizeX),(int) (textureWithPos.height * worldSizeY));
 
+			var placeTractor = CheckPixel(pixelPosition);
+			
+			if (placeTractor != PlaceTractor.none)
+			{
+				return placeTractor;
+			}
+
+			/*pixelPosition.x -= 1;
+			if (pixelPosition.x < 0) pixelPosition.x = 0;
+			
+			placeTractor = CheckPixel(pixelPosition);
+			
+			if (placeTractor != PlaceTractor.none)
+			{
+				return placeTractor;
+			}
+			
+			pixelPosition.x += 2;
+			if (pixelPosition.x > textureWithPos.width) pixelPosition.x = textureWithPos.width;
+			
+			placeTractor = CheckPixel(pixelPosition);
+			
+			if (placeTractor != PlaceTractor.none)
+			{
+				return placeTractor;
+			}
+
+			pixelPosition.x -= 1;
+			pixelPosition.y += 1;
+			
+			if (pixelPosition.y > textureWithPos.height) pixelPosition.y = textureWithPos.height;
+			
+			placeTractor = CheckPixel(pixelPosition);
+			
+			if (placeTractor != PlaceTractor.none)
+			{
+				return placeTractor;
+			}
+			
+			pixelPosition.y -= 2;
+			
+			if (pixelPosition.y < 0) pixelPosition.y = 0;
+			
+			placeTractor = CheckPixel(pixelPosition);
+			
+			if (placeTractor != PlaceTractor.none)
+			{
+				return placeTractor;
+			}*/
+			
+			
+
+			return PlaceTractor.none;
+		}
+
+		private PlaceTractor CheckPixel(Vector2Int pixelPosition)
+		{
 			var pixel = textureWithPos.GetPixel(pixelPosition.x,pixelPosition.y);
 
 			if (Math.Abs(pixel.g - 1) < 0.05f) return PlaceTractor.Ground;
