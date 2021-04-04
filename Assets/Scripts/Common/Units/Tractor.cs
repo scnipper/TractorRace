@@ -137,7 +137,8 @@ namespace Common.Units
 #if UNITY_EDITOR
 						if (Input.GetKey(KeyCode.LeftAlt))
 						{
-							motorTorque = 0;
+							//motorTorque = 0;
+							GetComponent<Rigidbody>().AddForce(trTractor.forward*1000,ForceMode.Impulse);
 						}
 #endif
 					}
@@ -330,5 +331,7 @@ namespace Common.Units
 		public bool IsBot { get; set; }
 		public BaseControl Control { get; set; }
 		public MainWorld World { get; set; }
+
+		public Transform TrTractor => trTractor;
 	}
 }

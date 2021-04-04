@@ -144,12 +144,19 @@ namespace Common.World
 		{
 			foreach (var worldCamera in worldCameras)
 			{
-				worldCamera.clearFlags = CameraClearFlags.Color;
-				roadMask.SetActive(true);
-				yield return null;
-				worldCamera.clearFlags = CameraClearFlags.Nothing;
-				roadMask.SetActive(false);
+				yield return OneCameraClear(worldCamera);
 			}
+
+			yield return OneCameraClear(lowCameraWorld);
+		}
+
+		private IEnumerator OneCameraClear(Camera cam)
+		{
+			cam.clearFlags = CameraClearFlags.Color;
+			roadMask.SetActive(true);
+			yield return null;
+			cam.clearFlags = CameraClearFlags.Nothing;
+			roadMask.SetActive(false);
 		}
 
 
