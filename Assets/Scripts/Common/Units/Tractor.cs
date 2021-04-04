@@ -21,6 +21,7 @@ namespace Common.Units
 		public GameObject pathDrawer;
 		public GameObject ladlePathDrawer;
 		public GameObject body;
+		public Animator shakeAnimatorCylinder;
 
 		public event Action onGameOver;
 		public event Action onFinish;
@@ -42,6 +43,7 @@ namespace Common.Units
 		private Transform trTractor;
 		private PlaceTractor placeTractor;
 		private bool isCheckGameOver;
+		private static readonly int IsShake = Animator.StringToHash("IsShake");
 
 		[Serializable]
 		public class AxleInfo {
@@ -271,6 +273,7 @@ namespace Common.Units
 					scale.z += deltaCylinder;
 					if (scale.x >= maxSizeCylinder)
 					{
+						shakeAnimatorCylinder.SetBool(IsShake,true);
 						isMaxCylinder = true;
 						scale.x = maxSizeCylinder;
 						scale.z = maxSizeCylinder;
@@ -285,6 +288,8 @@ namespace Common.Units
 					scale.x -= deltaCylinder;
 					scale.z -= deltaCylinder;
 					isMaxCylinder = false;
+					shakeAnimatorCylinder.SetBool(IsShake,false);
+
 					if (scale.x < saveCylinderScale.x)
 					{
 						scale = saveCylinderScale;
