@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using Common.Control.Impl;
+using Common.World;
 using DG.Tweening;
 using UnityEngine;
 
@@ -19,6 +21,7 @@ namespace Common.Units
 		public GameObject pathDrawer;
 		public GameObject ladlePathDrawer;
 		public GameObject body;
+		public Animator shakeAnimatorCylinder;
 
 		public event Action onGameOver;
 		public event Action onFinish;
@@ -36,6 +39,11 @@ namespace Common.Units
 		private static string finishPoint = "FinishPoint";
 		private bool isOnWater;
 		private bool isStoppingRotate = true;
+		private bool isMaxCylinder;
+		private Transform trTractor;
+		private PlaceTractor placeTractor;
+		private bool isCheckGameOver;
+		private static readonly int IsShake = Animator.StringToHash("IsShake");
 
 		[Serializable]
 		public class AxleInfo {
@@ -48,6 +56,8 @@ namespace Common.Units
 		}
 		private void Start()
 		{
+			trTractor = transform;
+
 			cylinderGroundGameObject = cylinderGround.gameObject;
 			saveCylinderScale = cylinderGround.localScale;
 			cylinderGroundGameObject.SetActive(false);
@@ -57,9 +67,21 @@ namespace Common.Units
 				.SetEase(Ease.Linear)
 				.SetLoops(-1, LoopType.Incremental);
 
+			StartCoroutine(LateGameOverCheck());
 		}
 
-		
+		private IEnumerator LateGameOverCheck()
+		{
+			while (true)
+			{
+				yield return null;
+				if (isCheckGameOver)
+				{
+					isCheckGameOver = false;
+					CheckGameOver();
+				}
+			}
+		}
 
 
 		private void OnTriggerEnter(Collider other)
@@ -110,6 +132,16 @@ namespace Common.Units
 					{
 						motorTorque += motorTorque * 0.1f;
 					}
+					else
+					{
+#if UNITY_EDITOR
+						if (Input.GetKey(KeyCode.LeftAlt))
+						{
+							//motorTorque = 0;
+							GetComponent<Rigidbody>().AddForce(trTractor.forward*1000,ForceMode.Impulse);
+						}
+#endif
+					}
 					axleInfo.leftWheel.motorTorque = motorTorque;
 					axleInfo.rightWheel.motorTorque = motorTorque;
 				}
@@ -138,17 +170,21 @@ namespace Common.Units
 			{
 				isOnWater = true;
 				ladlePathDrawer.SetActive(false);
-				pathDrawer.SetActive(true);
 				if (!cylinderGroundGameObject.activeSelf)
 				{
-					CheckGameOver();
+					isCheckGameOver = true;
+
+				}
+				else
+				{
+					pathDrawer.SetActive(true);
 				}
 			}
 			else if(wheelHit.collider.CompareTag(groundTag))
 			{
 				isOnWater = false;
 				pathDrawer.SetActive(false);
-				ladlePathDrawer.SetActive(Control.IsContactGround());
+				ladlePathDrawer.SetActive(Control.IsContactGround() && !isMaxCylinder);
 			}
 			else if(wheelHit.collider.CompareTag(worldGroundTag))
 			{
@@ -202,17 +238,22 @@ namespace Common.Units
 				.OnComplete(()=>isStoppingRotate = true)
 				.SetEase(Ease.Linear);
 		}
-		
 
+		
 		private void Update()
 		{
 			if(IsGameOver) return;
-
 			
+			if (!IsBot && !IsGameOver)
+			{
+				placeTractor = World.GetCurrentPlaceTractor(trTractor.position);
+				//print("POS TRACTOR: "+placeTractor);
+
+			}
 			UpdateSizeCylinderGround();
-			
-		}
 
+		}
+		
 
 		/// <summary>
 		/// Обновляем размер комка земли перед ковшом
@@ -227,26 +268,36 @@ namespace Common.Units
 
 
 				float deltaCylinder = Time.deltaTime;
-				if (Control.IsContactGround() && !isOnWater)
+				if (Control.IsContactGround() && !isOnWater && placeTractor != PlaceTractor.Ground)
 				{
 					scale.x += deltaCylinder;
 					scale.z += deltaCylinder;
 					if (scale.x >= maxSizeCylinder)
 					{
+						shakeAnimatorCylinder.SetBool(IsShake,true);
+						isMaxCylinder = true;
 						scale.x = maxSizeCylinder;
 						scale.z = maxSizeCylinder;
 					}
+					else
+					{
+						isMaxCylinder = false;
+					}
 				}
-				else
+				else if(isOnWater)
 				{
 					scale.x -= deltaCylinder;
 					scale.z -= deltaCylinder;
-					if (scale.x <= saveCylinderScale.x)
+					isMaxCylinder = false;
+					shakeAnimatorCylinder.SetBool(IsShake,false);
+
+					if (scale.x < saveCylinderScale.x)
 					{
 						scale = saveCylinderScale;
 						cylinderGroundGameObject.SetActive(false);
 						pathDrawer.SetActive(false);
-						CheckGameOver();
+						isCheckGameOver = true;
+						//CheckGameOver();
 					}
 				}
 
@@ -264,7 +315,7 @@ namespace Common.Units
 
 		private void CheckGameOver()
 		{
-			if (isOnWater)
+			if (isOnWater && placeTractor != PlaceTractor.WaterBridge)
 			{
 				body.layer = LayerMask.NameToLayer("IgnoreWater");
 				foreach (var ax in axleInfos)
@@ -279,5 +330,8 @@ namespace Common.Units
 		public bool IsGameOver { get; set; }
 		public bool IsBot { get; set; }
 		public BaseControl Control { get; set; }
+		public MainWorld World { get; set; }
+
+		public Transform TrTractor => trTractor;
 	}
 }

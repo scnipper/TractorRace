@@ -31,3 +31,4 @@ obj/
 *.unityproj
 *.booproj
 /GameSaves/
+/UserSettings
